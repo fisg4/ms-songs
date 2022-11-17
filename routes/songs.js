@@ -1,9 +1,9 @@
-var express = require('express');
-var crypto = require('crypto');
+const express = require('express');
+const crypto = require('crypto');
 
-var router = express.Router();
+const router = express.Router();
 
-var songs = [
+let songs = [
   {
     "id": "c2bc5007-edb4-47ee-8039-9081a3dcc5a4",
     "title": "La Bachata",
@@ -51,15 +51,18 @@ var songs = [
   }
 ]
 
-/* GET songs */
 router.get('/', function (req, res, next) {
-  res.send(songs);
+  if (Object.keys(req.query).length === 0)
+    res.send(songs);
+  else if (req.query.hasOwnProperty("title"))
+    next();
+  else
+    res.sendStatus(404);
 });
 
-/* GET songs/:id */
 router.get('/:id', function (req, res, next) {
-  var id = req.params.id;
-  var result = songs.find(song => {
+  const id = req.params.id;
+  const result = songs.find(song => {
     return song.id == id;
   });
   if (result)
@@ -69,10 +72,10 @@ router.get('/:id', function (req, res, next) {
   
 });
 
-/* GET songs/:title */
-router.get('/:title', function (req, res, next) {
-  var title = req.params.title;
-  var result = songs.find(song => {
+/* GET songs by title */
+router.get('/', function (req, res, next) {
+  const title = req.query.title;
+  const result = songs.find(song => {
     return song.title == title;
   });
   if (result)
@@ -81,10 +84,9 @@ router.get('/:title', function (req, res, next) {
     res.sendStatus(404);
 });
 
-/* POST song */
 router.post('/', function (req, res, next) {
-  var song = req.body;
-  var newSong = {
+  const song = req.body;
+  const newSong = {
     "id": crypto.randomUUID(),
     "title": song.title,
     "artists": song.artists,
@@ -97,26 +99,24 @@ router.post('/', function (req, res, next) {
   res.sendStatus(201);
 });
 
-/* PUT song */
 router.put('/', function (req, res, next) {
-  var song = req.body;
-  var result = songs.find(s => {
+  const song = req.body;
+  const result = songs.find(s => {
     return s.id == song.id;
   });
   if (result) {
     if (typeof song.lyrics !== 'undefined')
       result.lyrics = song.lyrics;
     if (typeof song.url !== 'undefined')
-      result.lyrics = song.url;
+      result.url = song.url;
     res.send(result);
   } else {
     res.sendStatus(400);
   }
 });
 
-/* DELETE songs/:id */
 router.delete('/:id', function (req, res, next) {
-  var id = req.params.id;
+  const id = req.params.id;
   songs = songs.filter(song => song.id !== id);
   res.sendStatus(204);
 });

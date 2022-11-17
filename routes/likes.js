@@ -1,9 +1,9 @@
-var express = require('express');
-var crypto = require('crypto');
+const express = require('express');
+const crypto = require('crypto');
 
-var router = express.Router();
+const router = express.Router();
 
-var users = [
+let users = [
   {
     "id": 1,
     "email": "user1@email.com"
@@ -18,7 +18,7 @@ var users = [
   }
 ]
 
-var likes = [
+let likes = [
   {
     "id": "9ec101ce-cf73-472e-9578-7db93e91469b",
     "user": 1,
@@ -56,31 +56,26 @@ var likes = [
   }
 ]
 
-/* GET likes/:userId */
-router.get('/:userId', function (req, res, next) {
-  var userId = req.params.userId;
-  userLikes = likes.filter(like => like.user === Number(userId));
-  if (userLikes.length)
-    res.send(userLikes);
-  else
-    next();
-});
+/* GET likes by userId or songId */
+router.get('/', function (req, res, next) {
+  const filter = req.query;
+  let filteredLikes = [];
 
-/* GET likes/:songId */
-router.get('/:songId', function (req, res, next) {
-  var songId = req.params.songId;
-  console.log(songId)
-  songLikes = likes.filter(like => like.song == songId);
-  if (songLikes.length)
-    res.send(songLikes);
+  if (filter.hasOwnProperty('userId'))
+    filteredLikes = likes.filter(like => like.user === Number(filter.userId));
+
+  else if (filter.hasOwnProperty('songId'))
+    filteredLikes = likes.filter(like => like.song == filter.songId);
+
+  if (filteredLikes.length)
+    res.send(filteredLikes);
   else
     res.sendStatus(404);
 });
 
-/* POST like */
 router.post('/', function (req, res, next) {
-  var like = req.body;
-  var newlike = {
+  const like = req.body;
+  const newlike = {
     "id": crypto.randomUUID(),
     "user": like.user,
     "song": like.song
@@ -89,9 +84,8 @@ router.post('/', function (req, res, next) {
   res.sendStatus(201);
 });
 
-/* DELETE likes/id */
 router.delete('/:id', function (req, res, next) {
-  var id = req.params.id;
+  const id = req.params.id;
   likes = likes.filter(like => like.id !== id);
   res.sendStatus(204);
 });
