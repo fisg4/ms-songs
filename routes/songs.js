@@ -50,10 +50,75 @@ var songs = [
     "url": "https://www.youtube.com/watch?v=5g2hT4GmAGU&ab_channel=RosaliaVEVO"
   }
 ]
+
 /* GET songs */
 router.get('/', function (req, res, next) {
   res.send(songs);
 });
 
+/* GET songs/:id */
+router.get('/:id', function (req, res, next) {
+  var id = req.params.id;
+  var result = songs.find(song => {
+    return song.id == id;
+  });
+  if (result)
+    res.send(result);
+  else
+    next();
+  
+});
+
+/* GET songs/:title */
+router.get('/:title', function (req, res, next) {
+  var title = req.params.title;
+  var result = songs.find(song => {
+    return song.title == title;
+  });
+  if (result)
+    res.send(result);
+  else
+    res.sendStatus(404);
+});
+
+/* POST song */
+router.post('/', function (req, res, next) {
+  var song = req.body;
+  var newSong = {
+    "id": crypto.randomUUID(),
+    "title": song.title,
+    "artists": song.artists,
+    "genre": song.genre,
+    "date": song.date,
+    "lyrics": typeof song.lyrics !== 'undefined' ? song.lyrics : "",
+    "url": typeof song.url !== 'undefined' ? song.url : "",
+  }
+  songs.push(newSong);
+  res.sendStatus(201);
+});
+
+/* PUT song */
+router.put('/', function (req, res, next) {
+  var song = req.body;
+  var result = songs.find(s => {
+    return s.id == song.id;
+  });
+  if (result) {
+    if (typeof song.lyrics !== 'undefined')
+      result.lyrics = song.lyrics;
+    if (typeof song.url !== 'undefined')
+      result.lyrics = song.url;
+    res.send(result);
+  } else {
+    res.sendStatus(400);
+  }
+});
+
+/* DELETE songs/:id */
+router.delete('/:id', function (req, res, next) {
+  var id = req.params.id;
+  songs = songs.filter(song => song.id !== id);
+  res.sendStatus(204);
+});
 
 module.exports = router;

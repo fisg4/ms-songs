@@ -5,6 +5,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var songsRouter = require('./routes/songs');
+var likesRouter = require('./routes/likes');
 
 var app = express();
 
@@ -16,5 +17,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/api/v1/songs', songsRouter);
+app.use('/api/v1/likes', likesRouter);
 
 module.exports = app;
