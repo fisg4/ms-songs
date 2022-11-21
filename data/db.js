@@ -79,17 +79,6 @@ const db = {
       },
     },
     {
-      id: "a8a57dbd-1c4c-46e0-94f2-ddde251a654f",
-      user: {
-        id: 4,
-        email: "user4@email.com",
-      },
-      song: {
-        id: "c2bc5007-edb4-47ee-8039-9081a3dcc5a4",
-        title: "La Bachata",
-      },
-    },
-    {
       id: "78a0595f-17ee-4760-9e43-97f16f45cb7c",
       user: {
         id: 2,

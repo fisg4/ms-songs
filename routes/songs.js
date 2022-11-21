@@ -24,7 +24,7 @@ router.get("/:id", function (req, res, next) {
 router.get("/", function (req, res, next) {
   const title = req.query.title.toLocaleLowerCase().trim();
   const result = songs.filter((song) => {
-    return song.title.toLocaleLowerCase() == title;
+    return song.title.toLocaleLowerCase().includes(title);
   });
   if (result) res.send(result);
   else res.sendStatus(404);
