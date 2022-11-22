@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const router = express.Router();
 
 let songs = require("../data/db").songs;
+const ticketService = require("../services/support");
 
 router.get("/", function (req, res, next) {
   if (Object.keys(req.query).length === 0) res.send(songs);
@@ -63,6 +64,23 @@ router.delete("/:id", function (req, res, next) {
   const id = req.params.id;
   songs = songs.filter((song) => song.id !== id);
   res.sendStatus(204);
+});
+
+router.post("/ticket", async function (req, res, next) {
+  // it calls ms-support to post a new ticket
+  const song = req.body;
+  const result = ticketService
+    .postTicketToChangeVideoUrl({
+      id: song.id,
+      url: song.url,
+    })
+    .then((value) => value);
+
+  if (await result) {
+    res.sendStatus(201);
+  } else {
+    res.sendStatus(400);
+  }
 });
 
 module.exports = router;
