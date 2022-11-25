@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const crypto = require("crypto");
 
@@ -5,6 +6,7 @@ const router = express.Router();
 
 let songs = require("../data/db").songs;
 const ticketService = require("../services/support");
+const spotifyService = require("../services/spotify");
 
 router.get("/", function (req, res, next) {
   if (Object.keys(req.query).length === 0) res.send(songs);
@@ -29,6 +31,17 @@ router.get("/", function (req, res, next) {
   });
   if (result) res.send(result);
   else res.sendStatus(404);
+});
+
+router.get("/spotify", async function (req, res, next) {
+  const title = req.query.title.toLocaleLowerCase().trim();
+  const response = await spotifyService.getAccessToken();
+  console.log(response);
+  if (response.status) {
+    //res.send(response.songs);
+  } else {
+    res.sendStatus(response.status);
+  }
 });
 
 router.post("/", function (req, res, next) {
