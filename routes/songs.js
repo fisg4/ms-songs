@@ -35,10 +35,9 @@ router.get("/", function (req, res, next) {
 
 router.get("/spotify", async function (req, res, next) {
   const title = req.query.title.toLocaleLowerCase().trim();
-  const response = await spotifyService.getAccessToken();
-  console.log(response);
+  const response = await spotifyService.searchSongs(title);
   if (response.status) {
-    //res.send(response.songs);
+    res.send(response.songs);
   } else {
     res.sendStatus(response.status);
   }

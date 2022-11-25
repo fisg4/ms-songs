@@ -20,19 +20,11 @@ const getAccessToken = async () => {
             SPOTIFY_APP_CLIENT_ID + ":" + SPOTIFY_APP_CLIENT_SECRET
           ).toString("base64"),
         "Content-Type": "application/x-www-form-urlencoded",
+        "Accept-Encoding": null,
       },
     }
   );
-  console.log(response.data); // Esto debería ser un json como el ejemplo:
-  /*
-  data: {
-    access_token: 'BQAaeR3FEGqXEssqRHKLIZ-feTIO6uIsESe5r0M6vKlRR_-f187Y6mIrUFQUSsJb9uQAhRDcVa9SiP4qLIC32pPsUiR269kQjf7oiY6TEzZVJXYGJPI',
-    token_type: 'Bearer',
-    expires_in: 3600
-  }
-  */
   if (response.status === 200) {
-    // Entra, porque es 200, pero el token está como encriptado
     const access_token = response.data.access_token;
     return {
       access_token,
@@ -57,6 +49,7 @@ const searchSongs = async (title) => {
       headers: {
         Authorization: "Bearer " + access_token,
         "Content-Type": "application/json",
+        "Accept-Encoding": null,
       },
     });
     if (response.status == 200) {
@@ -79,5 +72,4 @@ const searchSongs = async (title) => {
 
 module.exports = {
   searchSongs,
-  getAccessToken,
 };
