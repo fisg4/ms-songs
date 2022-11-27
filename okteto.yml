@@ -1,0 +1,13 @@
+build:
+  ms-songs:
+    context: .
+
+deploy:
+  - helm upgrade --install ms-songs chart
+    --set songs.image=${OKTETO_BUILD_MS_SONGS_IMAGE}
+
+dev:
+  ms-songs:
+    command: npm start
+    sync:
+      - .:/app
