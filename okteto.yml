@@ -1,0 +1,15 @@
+build:
+  ms-songs:
+    context: .
+
+deploy:
+  - helm upgrade --install ms-songs chart
+    --set songs.image=${OKTETO_BUILD_MS_SONGS_IMAGE}
+    --set spotifyAppClientId=$SPOTIFY_APP_CLIENT_ID
+    --set spotifyAppClientSecret=$SPOTIFY_APP_CLIENT_SECRET
+
+dev:
+  ms-songs:
+    command: npm start
+    sync:
+      - .:/app

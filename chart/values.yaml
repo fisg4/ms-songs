@@ -1,0 +1,5 @@
+songs:
+  replicaCount: 1
+
+spotifyAppClientId: required value
+spotifyAppClientSecret: required value
