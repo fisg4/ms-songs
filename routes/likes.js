@@ -3,39 +3,83 @@ const crypto = require("crypto");
 
 const router = express.Router();
 
-let likes = require("../data/db").likes;
+const Like = require("../models/like");
+const Song = require("../models/song");
+const User = require("../models/user");
+const userService = require("../services/users");
 
 /* GET likes by userId or songId */
-router.get("/", function (req, res, next) {
-  const filter = req.query;
-  let filteredLikes = [];
+router.get("/", async function (req, res, next) {
+  try {
+    const filter = req.query;
 
-  if (filter.hasOwnProperty("userId"))
-    filteredLikes = likes.filter(
-      (like) => like.user.id === Number(filter.userId)
-    );
-  else if (filter.hasOwnProperty("songId"))
-    filteredLikes = likes.filter((like) => like.song.id == filter.songId);
+    if (filter.hasOwnProperty("userId")) {
+      console.log(filter.userId);
+      const result = await Like.$where('this.user == "'+ filter.userId +'"');
+      res.send(result);
 
-  if (filteredLikes.length) res.send(filteredLikes);
-  else res.sendStatus(404);
+    } else if (filter.hasOwnProperty("songId")) {
+      console.log(filter.songId);
+      const result = await Like.$where('this.song == "'+ filter.songId +'"');
+      res.send(result);
+
+    } else {
+      next();
+    }
+  } catch(err) {
+    next(err);
+  }
 });
 
-router.post("/", function (req, res, next) {
-  const like = req.body;
-  const newlike = {
-    id: crypto.randomUUID(),
-    user: like.user,
-    song: like.song,
-  };
-  likes.push(newlike);
-  res.sendStatus(201);
+router.post("/", async function (req, res, next) {
+  try {
+    const {songId, userId} = req.body;
+    const like = new Like({
+      song: songId,
+      user: userId
+    });
+    const user = await userService.getUserById(userId);
+    const song = await Song.findById(songId);
+
+    if (user && song) {
+      const savedLike = await like.save();
+      user.likes = user.likes.concat(savedLike._id);
+      song.likes = song.likes.concat(savedLike._id);
+      user.save();
+      song.save();
+      res.sendStatus(201);
+
+      console.log(user);
+      console.log(song);
+      console.log(savedLike);
+    } else {
+      res,sendStatus(400);
+    }
+
+  } catch(err) {
+    next(err);
+  }
 });
 
-router.delete("/:id", function (req, res, next) {
-  const id = req.params.id;
-  likes = likes.filter((like) => like.id !== id);
-  res.sendStatus(204);
+router.delete("/:id", async function (req, res, next) {
+  try {
+    const id = req.params.id;
+    const result = await Like.findByIdAndDelete(id);
+    res.sendStatus(204);
+  } catch(err) {
+    next(err);
+  }
+});
+
+router.use((req, res, next) => {
+  res.sendStatus(404).end();
+});
+
+router.use((err, req, res, next) => {
+  console.log(err);
+  debug("DB problem", err);
+  if (err.name === "CastError") res.sendStatus(400).end();
+  else res.sendStatus(500).end();
 });
 
 module.exports = router;
