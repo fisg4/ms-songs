@@ -1,7 +1,6 @@
 const axios = require("axios");
 const urlJoin = require("url-join");
 const querystring = require("node:querystring");
-const debug = require("debug")("ms-songs:spotify-service");
 
 const SPOTIFY_APP_CLIENT_ID = process.env.SPOTIFY_APP_CLIENT_ID;
 const SPOTIFY_APP_CLIENT_SECRET = process.env.SPOTIFY_APP_CLIENT_SECRET;

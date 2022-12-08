@@ -1,4 +1,3 @@
-const { MongooseError } = require("mongoose");
 const User = require("../models/user");
 
 usersDb = [

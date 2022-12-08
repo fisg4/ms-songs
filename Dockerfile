@@ -12,7 +12,6 @@ COPY public ./public
 COPY routes ./routes
 COPY services ./services
 COPY models ./models
-COPY data ./data
 COPY app.js .
 
 EXPOSE 3000
