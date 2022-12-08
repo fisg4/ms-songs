@@ -1,5 +1,5 @@
 const express = require("express");
-const crypto = require("crypto");
+const debug = require('debug')('ms-songs:server');
 
 const router = express.Router();
 
@@ -14,14 +14,24 @@ router.get("/", async function (req, res, next) {
     const filter = req.query;
 
     if (filter.hasOwnProperty("userId")) {
-      console.log(filter.userId);
-      const result = await Like.$where('this.user == "'+ filter.userId +'"');
-      res.send(result);
+      const result = await Like.$where('this.user == "'+ filter.userId +'"')
+        .populate('song', {
+          title: 1,
+          artists: 1,
+          albumCover: 1
+        }
+      );
+      if (result.length > 0) res.send(result.map(like => like.cleanUser()));
+      else res.sendStatus(204);
 
     } else if (filter.hasOwnProperty("songId")) {
-      console.log(filter.songId);
-      const result = await Like.$where('this.song == "'+ filter.songId +'"');
-      res.send(result);
+      const result = await Like.$where('this.song == "'+ filter.songId +'"')
+        .populate('user', {
+          username: 1
+        }
+      );
+      if (result.length > 0) res.send(result.map(like => like.cleanSong()));
+      else res.sendStatus(204);
 
     } else {
       next();
@@ -42,20 +52,20 @@ router.post("/", async function (req, res, next) {
     const song = await Song.findById(songId);
 
     if (user && song) {
-      const savedLike = await like.save();
-      user.likes = user.likes.concat(savedLike._id);
-      song.likes = song.likes.concat(savedLike._id);
-      user.save();
-      song.save();
-      res.sendStatus(201);
-
-      console.log(user);
-      console.log(song);
-      console.log(savedLike);
+      const alreadyExists = Like.alreadyExists(songId, userId);
+      if (!alreadyExists) {
+        const savedLike = await like.save();
+        user.likes = user.likes.concat(savedLike._id);
+        song.likes = song.likes.concat(savedLike._id);
+        user.save();
+        song.save();
+        res.sendStatus(201);
+      } else {
+        res.status(409).send('Conflict: Duplicate');
+      }
     } else {
-      res,sendStatus(400);
+      next();
     }
-
   } catch(err) {
     next(err);
   }
@@ -72,7 +82,7 @@ router.delete("/:id", async function (req, res, next) {
 });
 
 router.use((req, res, next) => {
-  res.sendStatus(404).end();
+  res.sendStatus(400).end();
 });
 
 router.use((err, req, res, next) => {
