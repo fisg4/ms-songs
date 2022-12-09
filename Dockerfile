@@ -11,7 +11,7 @@ COPY bin ./bin
 COPY public ./public
 COPY routes ./routes
 COPY services ./services
-COPY data ./data
+COPY models ./models
 COPY app.js .
 
 EXPOSE 3000

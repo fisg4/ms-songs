@@ -1,7 +1,6 @@
 const axios = require("axios");
 const urlJoin = require("url-join");
 const querystring = require("node:querystring");
-const debug = require("debug")("ms-songs:spotify-service");
 
 const SPOTIFY_APP_CLIENT_ID = process.env.SPOTIFY_APP_CLIENT_ID;
 const SPOTIFY_APP_CLIENT_SECRET = process.env.SPOTIFY_APP_CLIENT_SECRET;
@@ -37,14 +36,24 @@ const getAccessToken = async () => {
   }
 };
 
-const searchSongs = async (title) => {
+const searchSongs = async (title, artist) => {
   const { access_token, status } = await getAccessToken();
   if (status === 200) {
-    const url = urlJoin(
+    let url = urlJoin(
       "https://api.spotify.com/v1/search",
       `?q=${title}`,
       "&type=track&include_external=audio"
     );
+
+    if (artist !== "") {
+      url = urlJoin(
+        "https://api.spotify.com/v1/search",
+        `?q=${title}%20artist:${artist}`,
+        "&type=track&include_external=audio"
+      );
+    }
+    console.log(url)
+
     const response = await axios.get(url, {
       headers: {
         Authorization: "Bearer " + access_token,
@@ -52,6 +61,7 @@ const searchSongs = async (title) => {
         "Accept-Encoding": null,
       },
     });
+
     if (response.status == 200) {
       const songs = response.data;
       return {
