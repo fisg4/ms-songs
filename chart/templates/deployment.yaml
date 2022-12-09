@@ -25,7 +25,7 @@ spec:
             - name: DB_URL
               valueFrom:
                 secretKeyRef:
-                  name: mongodb
+                  name: ms-songs-mongodb
                   key: ms_songs_db_url
             - name: SPOTIFY_APP_CLIENT_ID
               valueFrom:
