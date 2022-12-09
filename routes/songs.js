@@ -89,7 +89,7 @@ router.get("/spotify", async function (req, res, next) {
           result.songs.push(newSong);
         }
       }
-      console.log(response.status);
+
       if (result.songs.length > 0) res.send(result);
       else res.sendStatus(204);
     } else {
