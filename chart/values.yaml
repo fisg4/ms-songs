@@ -1,5 +1,7 @@
 songs:
   replicaCount: 1
 
+msSongsMongUrl: mongodb://mongo/test
+
 spotifyAppClientId: required value
 spotifyAppClientSecret: required value
