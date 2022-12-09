@@ -1,5 +1,5 @@
 const express = require("express");
-const debug = require('debug')('ms-songs:server');
+const debug = require("debug")("ms-songs:server");
 
 const router = express.Router();
 
@@ -14,39 +14,39 @@ router.get("/", async function (req, res, next) {
     const filter = req.query;
 
     if (filter.hasOwnProperty("userId")) {
-      const result = await Like.$where('this.user == "'+ filter.userId +'"')
-        .populate('song', {
+      const result = await Like.find()
+        .where("user")
+        .equals(filter.userId)
+        .populate("song", {
           title: 1,
-          artists: 1,
-          albumCover: 1
-        }
-      );
-      if (result.length > 0) res.send(result.map(like => like.cleanUser()));
+          artist: 1,
+          albumCover: 1,
+        });
+      if (result.length > 0) res.send(result.map((like) => like.cleanUser()));
       else res.sendStatus(204);
-
     } else if (filter.hasOwnProperty("songId")) {
-      const result = await Like.$where('this.song == "'+ filter.songId +'"')
-        .populate('user', {
-          username: 1
-        }
-      );
-      if (result.length > 0) res.send(result.map(like => like.cleanSong()));
+      const result = await Like.find()
+        .where("song")
+        .equals(filter.songId)
+        .populate("user", {
+          username: 1,
+        });
+      if (result.length > 0) res.send(result.map((like) => like.cleanSong()));
       else res.sendStatus(204);
-
     } else {
       next();
     }
-  } catch(err) {
+  } catch (err) {
     next(err);
   }
 });
 
 router.post("/", async function (req, res, next) {
   try {
-    const {songId, userId} = req.body;
+    const { songId, userId } = req.body;
     const like = new Like({
       song: songId,
-      user: userId
+      user: userId,
     });
     const user = await userService.getUserById(userId);
     const song = await Song.findById(songId);
@@ -61,12 +61,12 @@ router.post("/", async function (req, res, next) {
         song.save();
         res.sendStatus(201);
       } else {
-        res.status(409).send('Conflict: Duplicate');
+        res.status(409).send("Conflict: Duplicate");
       }
     } else {
       next();
     }
-  } catch(err) {
+  } catch (err) {
     next(err);
   }
 });
@@ -76,7 +76,7 @@ router.delete("/:id", async function (req, res, next) {
     const id = req.params.id;
     const result = await Like.findByIdAndDelete(id);
     res.sendStatus(204);
-  } catch(err) {
+  } catch (err) {
     next(err);
   }
 });

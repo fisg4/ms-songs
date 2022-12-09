@@ -52,7 +52,6 @@ const searchSongs = async (title, artist) => {
         "&type=track&include_external=audio"
       );
     }
-    console.log(url)
 
     const response = await axios.get(url, {
       headers: {
