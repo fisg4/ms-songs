@@ -1,0 +1,45 @@
+components:
+  $ref: "./like.yaml"
+  schemas:
+    Song:
+      type: object
+      properties:
+        title:
+          type: string
+          example: MOTOMAMI
+        artists:
+          type: array
+          items:
+            type: string
+          example:
+            - ROSALÍA
+        releaseDate:
+          type: string
+          format: date
+          example: "2022-03-18"
+        albumCover:
+          type: string
+          example: https://i.scdn.co/image/ab67616d0000b2730c179967a265de0fc76382fe
+        url:
+          type: string
+          example: https://p.scdn.co/mp3-preview/b46b957c1f7b1afc39c33e2a95695514ca9c6fd6?cid=4719ec888a3d4d1099df0534d0e98f41
+        lyrics:
+          type: string
+          example: Okay, motomami
+            Pesa mi tatami
+            Hit a lo tsunami
+            Oh
+            Okay, motomami
+            Fina, un origami
+            Cruda a lo sashimi
+            Oh...
+        spotifyId:
+          type: string
+          example: 6ygEPi8EtVkUO0Xarcgs63
+        likes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Like"
+        id:
+          type: string
+          example: 6393291baae5a26cbf501bab

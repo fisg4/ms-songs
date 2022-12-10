@@ -1,0 +1,21 @@
+components:
+  schemas:
+    SongsUserLikes:
+      type: object
+      properties:
+        song:
+          type: object
+          properties:
+            title:
+              type: string
+              example: MOTOMAMI
+            albumCover:
+              type: string
+              example: https://i.scdn.co/image/ab67616d0000b2730c179967a265de0fc76382fe
+            id:
+              type: string
+              example: 6393291baae5a26cbf501bab
+        date:
+          type: string
+          format: date
+          example: "2022-03-18"

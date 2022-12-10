@@ -1,0 +1,93 @@
+paths:
+  /likes?userId:
+    get:
+      tags:
+        - Likes
+      summary: Gets the songs the user likes
+      description: Returns a list of all songs that a user has liked
+      parameters:
+        - name: userId
+          in: query
+          description: ID of a system user
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of songs that a user likes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SongsUserLikes"
+        "204":
+          description: There are no likes in the system associated with the search criteria
+  /likes?songId:
+    get:
+      tags:
+        - Likes
+      summary: Gets song likes
+      description: Returns a list with the likes of a song
+      parameters:
+        - name: songId
+          in: query
+          description: ID of a song in the system
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of users who like the song
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UsersLikeSong"
+        "204":
+          description: There are no likes in the system associated with the search criteria
+  /likes:
+    post:
+      tags:
+        - Likes
+      summary: Post a new like for a song
+      description: The operation records a like from a user to a song in the system
+      requestBody:
+        description: Created like object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                songId:
+                  type: string
+                  example: 6393291baae5a26cbf501bab
+                userId:
+                  type: string
+                  example: 6393294aaae5a26cbf501bae
+      responses:
+        "201":
+          description: Successful operation. Posted like
+        "409":
+          description: Duplicated like
+  /likes/:id:
+    delete:
+      tags:
+        - Likes
+      summary: Remove a like
+      description: Remove an existing like in the system
+      parameters:
+        - name: id
+          in: path
+          description: Like id in the system
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+components:
+  $ref:
+    - "./components/schemas/songs-user-likes.yaml"
+    - "./components/schemas/users-like-song.yaml"

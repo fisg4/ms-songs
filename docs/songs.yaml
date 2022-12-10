@@ -1,0 +1,164 @@
+paths:
+  /songs:
+    get:
+      tags:
+        - Songs
+      summary: Returns all the songs in the system
+      description: Returns all the songs found in the system,
+        and can be filtered by the song title
+      parameters:
+        - name: title
+          in: query
+          description: Song title to be searched in the system
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of songs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Song"
+        "204":
+          description: There are no songs in the system
+    post:
+      tags:
+        - Songs
+      summary: Post a new song in the system
+      description: Through this operation, a result obtained after searching
+        for songs on Spotify is saved in the system
+      requestBody:
+        description: Created song object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpotifyResponse"
+      responses:
+        "201":
+          description: Successful operation. Posted song
+        "409":
+          description: Duplicated song
+    put:
+      tags:
+        - Songs
+      summary: Update a song
+      description: Update the lyrics of the song and the URL link to the video clip
+      requestBody:
+        description: Created song object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                url:
+                  type: string
+                lyrics:
+                  type: string
+      responses:
+        "200":
+          description: The updated song
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Song"
+        "400":
+          description: Bad Request
+  /songs/ticket:
+    post:
+      tags:
+        - Songs
+      summary: Post a ticket to modify a song's video
+      description:
+        The created ticket is sent to the support service so that it can be
+        evaluated. If accepted, the changes are made to the resource
+      requestBody:
+        description: Created ticket object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Ticket"
+      responses:
+        "201":
+          description: Successful operation. Posted ticket
+        "400":
+          description: Bad Request
+  /songs/:id:
+    get:
+      tags:
+        - Songs
+      summary: Find song by ID
+      description: Returns a single song by ID
+      parameters:
+        - name: id
+          in: path
+          description: Song id in the system
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The song
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Song"
+        "404":
+          description: Song not found
+    delete:
+      tags:
+        - Songs
+      summary: Delete a song
+      description: Delete a song permanently from the system
+      parameters:
+        - name: id
+          in: path
+          description: Song id in the system
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+  /songs/spotify:
+    get:
+      tags:
+        - Songs
+      summary: Search songs on Spoify
+      description: Search for songs on Spotify by title and artist
+      parameters:
+        - name: title
+          in: query
+          description: Song title to be searched in the system
+          required: true
+          schema:
+            type: string
+        - name: artist.
+          in: query
+          description: Song artist to be searched in the system
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of songs from Spotify
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SpotifyResponse"
+        "204":
+          description: There are no songs in the system
+components:
+  $ref:
+    - "./components/schemas/song.yaml"
+    - "./components/schemas/spotify-response.yaml"
+    - "./components/schemas/ticket.yaml"
+    - "./components/parameters/song-id.yaml"

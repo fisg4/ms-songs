@@ -1,0 +1,18 @@
+components:
+  schemas:
+    Like:
+      type: object
+      properties:
+        song:
+          type: ObjectId
+          example: ObjectId("6393291baae5a26cbf501bab")
+        user:
+          type: string
+          example: n4m3user
+        date:
+          type: string
+          format: date
+          example: "2022-12-01"
+        id:
+          type: string
+          example: 6393294aaae5a26cbf501bae

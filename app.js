@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const songsRouter = require("./routes/songs");
 const likesRouter = require("./routes/likes");
+const { swaggerDocs } = require("./swagger");
 
 const DB_URL = process.env.DB_URL || "mongodb://localhost/test";
 mongoose.connect(DB_URL);
@@ -22,5 +23,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/v1/songs", songsRouter);
 app.use("/api/v1/likes", likesRouter);
+swaggerDocs(app);
 
 module.exports = app;
