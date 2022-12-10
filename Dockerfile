@@ -12,6 +12,8 @@ COPY public ./public
 COPY routes ./routes
 COPY services ./services
 COPY models ./models
+COPY docs ./docs
+COPY swagger.js .
 COPY app.js .
 
 EXPOSE 3000

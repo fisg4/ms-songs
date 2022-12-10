@@ -1,0 +1,11 @@
+components:
+  schemas:
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 6393291baae5a26cbf501bab
+        url:
+          type: string
+          example: https://www.youtube.com/watch?v=TiM_TFpT_DE&ab_channel=MTZManuelTurizo
