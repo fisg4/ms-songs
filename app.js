@@ -2,16 +2,11 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const mongoose = require("mongoose");
 
+const dbConnect = require("./db");
 const songsRouter = require("./routes/songs");
 const likesRouter = require("./routes/likes");
 const { swaggerDocs } = require("./swagger");
-
-const DB_URL = process.env.DB_URL || "mongodb://localhost/test";
-mongoose.connect(DB_URL);
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "db connection error"));
 
 const app = express();
 
@@ -24,5 +19,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/v1/songs", songsRouter);
 app.use("/api/v1/likes", likesRouter);
 swaggerDocs(app);
+
+dbConnect().then(() => {
+  console.log("⚡️ Database connect well done!");
+});
 
 module.exports = app;
