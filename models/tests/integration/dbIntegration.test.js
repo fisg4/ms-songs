@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const Song = require("../song");
-const dbConnect = require("../../db");
+const Song = require("../../song");
+const dbConnect = require("../../../db");
 
 describe("Songs DB connection", () => {
   beforeAll(() => {
