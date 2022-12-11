@@ -37,4 +37,4 @@ jobs:
       - run: npm test
       - run: npm run integration
         env:
-          DB_URL: mongodb://mongo/test
+          DB_URL: mongodb://localhost/test
