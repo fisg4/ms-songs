@@ -14,6 +14,7 @@ COPY services ./services
 COPY models ./models
 COPY docs ./docs
 COPY swagger.js .
+COPY db.js .
 COPY app.js .
 
 EXPOSE 3000
