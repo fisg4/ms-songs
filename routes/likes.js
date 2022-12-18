@@ -3,7 +3,6 @@ const router = express.Router();
 
 const Like = require("../models/like");
 const Song = require("../models/song");
-const User = require("../models/user");
 const userService = require("../services/users");
 const notFound = require("./notFound");
 const handleErrors = require("./handleErrors");
@@ -15,7 +14,7 @@ router.get("/", async function (req, res, next) {
 
     if (filter.hasOwnProperty("userId")) {
       const result = await Like.find()
-        .where("user")
+        .where("user._id")
         .equals(filter.userId)
         .populate("song", {
           title: 1,
@@ -46,20 +45,19 @@ router.get("/", async function (req, res, next) {
 router.post("/", async function (req, res, next) {
   try {
     const { songId, userId } = req.body;
-    const like = new Like({
-      song: songId,
-      user: userId,
-    });
-    const user = await userService.getUserById(userId);
+    const { user } = await userService.getUserById(userId);
     const song = await Song.findById(songId);
 
+    const like = new Like({
+      song: songId,
+      user,
+    });
+
     if (user && song) {
-      const alreadyExists = Like.alreadyExists(songId, userId);
+      const alreadyExists = await Like.alreadyExists(songId, user._id);
       if (!alreadyExists) {
         const savedLike = await like.save();
-        user.likes = user.likes.concat(savedLike._id);
         song.likes = song.likes.concat(savedLike._id);
-        user.save();
         song.save();
         res.sendStatus(201);
       } else {
