@@ -30,7 +30,6 @@ likeSchema.methods.cleanSong = function() {
     }
 };
 
-// TODO: Añadir validación de duplicado
 likeSchema.statics.alreadyExists  = function(songId, userId) {
     const query  = Like.where({ song: songId, user: userId });
     query.findOne(function (err, result) {

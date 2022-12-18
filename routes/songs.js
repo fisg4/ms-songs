@@ -1,13 +1,13 @@
 require("dotenv").config();
 const express = require("express");
-const debug = require("debug")("ms-songs:server");
-
 const router = express.Router();
 
 const Song = require("../models/song");
 const Like = require("../models/like");
 const ticketService = require("../services/support");
 const spotifyService = require("../services/spotify");
+const notFound = require("./notFound");
+const handleErrors = require("./handleErrors");
 
 router.get("/", async function (req, res, next) {
   try {
@@ -16,9 +16,9 @@ router.get("/", async function (req, res, next) {
         user: 1,
         date: 1,
       });
-      if (result) res.send(result);
+      if (result?.length > 0) res.send(result);
       else res.sendStatus(204);
-    } else if (req.query.hasOwnProperty("title")) {
+    } else {
       next();
     }
   } catch (err) {
@@ -34,7 +34,7 @@ router.get("/:id", async function (req, res, next) {
         user: 1,
         date: 1,
       });
-      if (result) res.send(result);
+      if (result?.length > 0) res.send(result);
       else res.sendStatus(204);
     } else {
       next();
@@ -47,14 +47,14 @@ router.get("/:id", async function (req, res, next) {
 /* GET songs by title */
 router.get("/", async function (req, res, next) {
   try {
-    if (Object.keys(req.query).length > 0) {
+    if (req.query.hasOwnProperty("title")) {
       const title = req.query.title.toLocaleLowerCase().trim();
       const regexTitle = new RegExp(`\\b${title}\\b`, "i");
       const result = await Song.find({ title: regexTitle }).populate("likes", {
         user: 1,
         date: 1,
       });
-      if (result) res.send(result);
+      if (result?.length > 0) res.send(result);
       else res.sendStatus(204);
     } else {
       next();
@@ -177,15 +177,8 @@ router.delete("/:id", async function (req, res, next) {
   }
 });
 
-router.use((req, res, next) => {
-  res.sendStatus(404).end();
-});
+router.use(notFound);
 
-router.use((err, req, res, next) => {
-  console.log(err);
-  debug("DB problem", err);
-  if (err.name === "CastError") res.sendStatus(400).end();
-  else res.sendStatus(500).end();
-});
+router.use(handleErrors);
 
 module.exports = router;
