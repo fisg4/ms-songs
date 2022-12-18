@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const debug = require("debug")("ms-songs:server");
 

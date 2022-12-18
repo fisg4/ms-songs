@@ -32,5 +32,5 @@ async function postTicketToChangeVideoUrl({ authorId, songId, text }) {
 }
 
 module.exports = {
-  postTicketToChangeVideoUrl: postTicketToChangeVideoUrl,
+  postTicketToChangeVideoUrl,
 };
