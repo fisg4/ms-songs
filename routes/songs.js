@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const debug = require("debug")("ms-songs:server");
 
@@ -72,7 +71,7 @@ router.get("/spotify", async function (req, res, next) {
 
     const response = await spotifyService.searchSongs(title, artist);
     if (response.status) {
-      const result = { songs: [] };
+      const result = [];
       if (response.songs.tracks) {
         for (track of response.songs.tracks.items) {
           let newSong = {
@@ -86,11 +85,11 @@ router.get("/spotify", async function (req, res, next) {
           track.artists.forEach((artist) => {
             newSong.artists.push(artist.name);
           });
-          result.songs.push(newSong);
+          result.push(newSong);
         }
       }
 
-      if (result.songs.length > 0) res.send(result);
+      if (result.length > 0) res.send(result);
       else res.sendStatus(204);
     } else {
       res.sendStatus(response.status);
@@ -125,16 +124,15 @@ router.post("/", async function (req, res, next) {
 router.post("/ticket", async function (req, res, next) {
   // it calls ms-support to post a new ticket
   try {
-    const song = req.body;
-    const result = ticketService
-      .postTicketToChangeVideoUrl({
-        id: song.id,
-        url: song.url,
-      })
-      .then((value) => value);
+    const ticket = req.body;
+    const result = await ticketService.postTicketToChangeVideoUrl({
+      authorId: ticket.userId,
+      songId: ticket.songId,
+      text: ticket.videoUrl,
+    });
 
-    if (await result) {
-      res.sendStatus(201);
+    if (result.status == 201) {
+      res.status(result.status).send(result.ticket);
     } else {
       res.sendStatus(400);
     }
