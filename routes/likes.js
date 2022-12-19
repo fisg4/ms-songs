@@ -52,7 +52,6 @@ router.post("/", async function (req, res, next) {
       song: songId,
       user,
     });
-
     if (user && song) {
       const alreadyExists = await Like.alreadyExists(songId, user._id);
       if (!alreadyExists) {
@@ -64,7 +63,7 @@ router.post("/", async function (req, res, next) {
         res.status(409).send("Conflict: Duplicate");
       }
     } else {
-      next();
+      throw new Error("Invalid song or user");
     }
   } catch (err) {
     next(err);

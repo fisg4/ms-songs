@@ -1,7 +1,7 @@
 const app = require("../../app");
 const Song = require("../../models/song");
-const User = require("../../models/user");
 const Like = require("../../models/like");
+const userService = require("../../services/users");
 const request = require("supertest");
 
 const BASEPATH_ENDPOINT = "/api/v1";
@@ -64,19 +64,25 @@ const likes = [
     song: "639266d51f1d8d5c46e31c3f",
     user: "user1",
     date: Date.now(),
-    id: "5f9f1b9f1f1d8d5c46e31c3f",
+    _id: "5f9f1b9f1f1d8d5c46e31c3f",
   },
   {
     song: "639266d51f1d8d5c46e31c3f",
     user: "user2",
     date: Date.now(),
-    id: "5f9f1b9f1f1d8d5c46e31c3e",
+    _id: "5f9f1b9f1f1d8d5c46e31c3e",
   },
   {
     song: "639319967a53a5498109fcb0",
     user: "user1",
     date: Date.now(),
-    id: "5f9f1b9f1f1d8d5c46e31c3d",
+    _id: "5f9f1b9f1f1d8d5c46e31c3d",
+  },
+  {
+    song: "639319967a53a5498109fcb1",
+    user: "user1",
+    date: Date.now(),
+    _id: "5f9f1b9f1f1d8d5c46e31c3c",
   }
 ];
 
@@ -267,6 +273,144 @@ describe("Songs API", () => {
       const response = await request(app).get(`${BASEPATH_ENDPOINT}/likes?song=asdfghjkl`);
       expect(response.status).toBe(404);
     });
+  });
+
+  describe("POST /likes", () => {
+    it("Should create a like", async () => {
+      const getUserByIdMock = jest.spyOn(userService, "getUserById");
+      const findSongByIdMock = jest.spyOn(Song, "findById");
+      const alreadyExistsMock = jest.spyOn(Like, "alreadyExists");
+      const saveLikeMock = jest.spyOn(Like.prototype, "save");
+      const saveSongMock = jest.spyOn(Song.prototype, "save");
+
+      getUserByIdMock.mockImplementation(() => {
+        return {
+          status: 200,
+          user: users[0],
+        };
+      });
+
+      findSongByIdMock.mockImplementation(() => {
+        return new Song({
+          title: songs[2].title,
+          artists: songs[2].artists,
+          releaseDate: songs[2].releaseDate,
+          albumCover: songs[2].albumCover,
+          url: songs[2].url,
+          lyrics: songs[2].lyrics,
+          spotifyId: songs[2].spotifyId,
+          likes: songs[2].likes,
+        });
+      });
+
+      alreadyExistsMock.mockImplementation(() => {
+        return false;
+      });
+
+      saveLikeMock.mockImplementation(() => {
+        return likes[3];
+      });
+
+      saveSongMock.mockImplementation(() => {
+        return songs[2];
+      });
+
+      const response = await request(app).post(`${BASEPATH_ENDPOINT}/likes`).send({
+        songId: songs[2].id,
+        userId: users[0].id
+      });
+      expect(getUserByIdMock).toHaveBeenCalled();
+      expect(findSongByIdMock).toHaveBeenCalled();
+      expect(alreadyExistsMock).toHaveBeenCalled();
+      expect(saveLikeMock).toHaveBeenCalled();
+      expect(saveSongMock).toHaveBeenCalled();
+      expect(response.status).toBe(201);
+    });
+
+    it("Should return Conflict state if the like is a duplicate", async () => {
+      const getUserByIdMock = jest.spyOn(userService, "getUserById");
+      const findSongByIdMock = jest.spyOn(Song, "findById");
+      const alreadyExistsMock = jest.spyOn(Like, "alreadyExists");
+
+      getUserByIdMock.mockImplementation(() => {
+        return {
+          status: 200,
+          user: users[0],
+        };
+      });
+
+      findSongByIdMock.mockImplementation(() => {
+        return new Song({
+          title: songs[2].title,
+          artists: songs[2].artists,
+          releaseDate: songs[2].releaseDate,
+          albumCover: songs[2].albumCover,
+          url: songs[2].url,
+          lyrics: songs[2].lyrics,
+          spotifyId: songs[2].spotifyId,
+          likes: songs[2].likes,
+        });
+      });
+
+      alreadyExistsMock.mockImplementation(() => {
+        return true;
+      });
+
+      const response = await request(app).post(`${BASEPATH_ENDPOINT}/likes`).send({
+        songId: songs[2].id,
+        userId: users[0].id
+      });
+      expect(getUserByIdMock).toHaveBeenCalled();
+      expect(findSongByIdMock).toHaveBeenCalled();
+      expect(alreadyExistsMock).toHaveBeenCalled();
+      expect(response.status).toBe(409);
+    });
+
+    it("Should return Bad Request state if the song does not exist", async () => {
+      const getUserByIdMock = jest.spyOn(userService, "getUserById");
+      const findSongByIdMock = jest.spyOn(Song, "findById");
+
+      getUserByIdMock.mockImplementation(() => {
+        return {
+          status: 200,
+          user: users[0],
+        };
+      });
+
+      findSongByIdMock.mockImplementation(() => {
+        return undefined;
+      });
+
+      const response = await request(app).post(`${BASEPATH_ENDPOINT}/likes`).send({
+        songId: songs[2].id,
+        userId: users[0].id
+      });
+      expect(getUserByIdMock).toHaveBeenCalled();
+      expect(findSongByIdMock).toHaveBeenCalled();
+      expect(response.status).toBe(400);
+    });
+
+    it("Should return Bad Request state if the user does not exist", async () => {
+      const getUserByIdMock = jest.spyOn(userService, "getUserById");
+      const findSongByIdMock = jest.spyOn(Song, "findById");
+
+      getUserByIdMock.mockImplementation(() => {
+        throw new Error("Failed to get user");
+      });
+
+      findSongByIdMock.mockImplementation(() => {
+        return undefined;
+      });
+
+      const response = await request(app).post(`${BASEPATH_ENDPOINT}/likes`).send({
+        songId: songs[2].id,
+        userId: users[0].id
+      });
+      expect(getUserByIdMock).toHaveBeenCalled();
+      expect(findSongByIdMock).toHaveBeenCalled();
+      expect(response.status).toBe(400);
+    });
+
   });
 
 });
