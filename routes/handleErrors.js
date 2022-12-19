@@ -13,6 +13,8 @@ module.exports = (err, req, res, next) => {
     else if (err?.message?.includes("Failed to get user"))
         res.status(400).send("Bad Request: Invalid user").end();
 
+    else if (err?.message?.includes("Failed to delete like"))
+        res.status(400).send("Bad Request: Invalid like").end();
     else
         res.sendStatus(500).end();
 };

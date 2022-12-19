@@ -413,4 +413,30 @@ describe("Songs API", () => {
 
   });
 
+  describe("DELETE /likes", () => {
+    it("Should return No Content state if the like has been deleted", async () => {
+      const findAndDeleteMock = jest.spyOn(Like, "findByIdAndDelete");
+
+      findAndDeleteMock.mockImplementation(() => {
+        return undefined;
+      });
+
+      const response = await request(app).del(`${BASEPATH_ENDPOINT}/likes/` + likes[0]._id);
+      expect(findAndDeleteMock).toHaveBeenCalled();
+      expect(response.status).toBe(204);
+    });
+
+    it("Should return Bad Request state if the like does not exist", async () => {
+      const findAndDeleteMock = jest.spyOn(Like, "findByIdAndDelete");
+
+      findAndDeleteMock.mockImplementation(() => {
+        throw new Error("Invalid like id");
+      });
+
+      const response = await request(app).del(`${BASEPATH_ENDPOINT}/likes/` + likes[0]._id);
+      expect(findAndDeleteMock).toHaveBeenCalled();
+      expect(response.status).toBe(400);
+    });
+  });
+
 });

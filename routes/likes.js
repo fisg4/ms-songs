@@ -76,6 +76,7 @@ router.delete("/:id", async function (req, res, next) {
     const result = await Like.findByIdAndDelete(id);
     res.sendStatus(204);
   } catch (err) {
+    err = new Error("Failed to delete like")
     next(err);
   }
 });
