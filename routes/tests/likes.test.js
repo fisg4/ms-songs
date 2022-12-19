@@ -411,6 +411,21 @@ describe("Songs API", () => {
       expect(response.status).toBe(400);
     });
 
+    it("Should return Internal Server Error state if an unknown error occurs", async () => {
+      const getUserByIdMock = jest.spyOn(userService, "getUserById");
+
+      getUserByIdMock.mockImplementation(() => {
+        throw new Error("Unknown error");
+      });
+
+      const response = await request(app).post(`${BASEPATH_ENDPOINT}/likes`).send({
+        songId: songs[2].id,
+        userId: users[0].id
+      });
+      expect(getUserByIdMock).toHaveBeenCalled();
+      expect(response.status).toBe(500);
+    });
+
   });
 
   describe("DELETE /likes", () => {
