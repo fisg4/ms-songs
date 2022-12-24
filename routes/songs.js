@@ -1,5 +1,6 @@
 const express = require("express");
 const debug = require("debug")("ms-songs:server");
+const passport = require("passport");
 
 const router = express.Router();
 
@@ -99,81 +100,104 @@ router.get("/spotify", async function (req, res, next) {
   }
 });
 
-router.post("/", async function (req, res, next) {
-  try {
-    const { title, artists, releaseDate, albumCover, url, lyrics, spotifyId } =
-      req.body;
-    const song = new Song({
-      title,
-      artists,
-      releaseDate: new Date(releaseDate),
-      albumCover,
-      url,
-      lyrics,
-      spotifyId,
-      likes: [],
-    });
-    await song.save();
-    return res.sendStatus(201);
-  } catch (err) {
-    if (err?.code === 11000) res.status(409).send("Conflict: Duplicate");
-    else next(err);
-  }
-});
-
-router.post("/ticket", async function (req, res, next) {
-  // it calls ms-support to post a new ticket
-  try {
-    const ticket = req.body;
-    const result = await ticketService.postTicketToChangeVideoUrl({
-      authorId: ticket.userId,
-      songId: ticket.songId,
-      text: ticket.videoUrl,
-    });
-
-    if (result.status == 201) {
-      res.status(result.status).send(result.ticket);
-    } else {
-      res.sendStatus(400);
-    }
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.put("/", async function (req, res, next) {
-  try {
-    const { id, url, lyrics } = req.body;
-    if (Object.keys(req.query).length === 0) {
-      const newInfo = {};
-      if (typeof url !== "undefined") newInfo.url = url;
-      if (typeof lyrics !== "undefined") newInfo.lyrics = lyrics;
-
-      const result = await Song.findByIdAndUpdate(id, newInfo, {
-        new: true,
-      }).populate("likes", {
-        user: 1,
-        date: 1,
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    try {
+      const {
+        title,
+        artists,
+        releaseDate,
+        albumCover,
+        url,
+        lyrics,
+        spotifyId,
+      } = req.body;
+      const song = new Song({
+        title,
+        artists,
+        releaseDate: new Date(releaseDate),
+        albumCover,
+        url,
+        lyrics,
+        spotifyId,
+        likes: [],
       });
-      res.send(result);
-    } else {
-      res.sendStatus(400);
+      await song.save();
+      return res.sendStatus(201);
+    } catch (err) {
+      if (err?.code === 11000) res.status(409).send("Conflict: Duplicate");
+      else next(err);
     }
-  } catch (err) {
-    next(err);
   }
-});
+);
 
-router.delete("/:id", async function (req, res, next) {
-  try {
-    const id = req.params.id;
-    const result = await Song.findByIdAndDelete(id);
-    const deletedLikes = await Like.deleteMany({ song: id });
-    res.sendStatus(204);
-  } catch (err) {
-    next(err);
+router.post(
+  "/ticket",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    // it calls ms-support to post a new ticket
+    try {
+      const ticket = req.body;
+      const result = await ticketService.postTicketToChangeVideoUrl({
+        authorId: ticket.userId,
+        songId: ticket.songId,
+        text: ticket.videoUrl,
+      });
+
+      if (result.status == 201) {
+        res.status(result.status).send(result.ticket);
+      } else {
+        res.sendStatus(400);
+      }
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
+
+router.put(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    try {
+      const { id, url, lyrics } = req.body;
+      if (Object.keys(req.query).length === 0) {
+        const newInfo = {};
+        if (typeof url !== "undefined") newInfo.url = url;
+        if (typeof lyrics !== "undefined") newInfo.lyrics = lyrics;
+
+        const result = await Song.findByIdAndUpdate(id, newInfo, {
+          new: true,
+        }).populate("likes", {
+          user: 1,
+          date: 1,
+        });
+        res.send(result);
+      } else {
+        res.sendStatus(400);
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    try {
+      const id = req.params.id;
+      const result = await Song.findByIdAndDelete(id);
+      const deletedLikes = await Like.deleteMany({ song: id });
+      res.sendStatus(204);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 router.use((req, res, next) => {
   res.sendStatus(404).end();

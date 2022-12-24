@@ -1,4 +1,3 @@
-require("dotenv").config();
 const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
@@ -8,21 +7,9 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.JWT_SECRET;
 
 passport.use(
-  "admin",
   new JwtStrategy(opts, function (jwt_payload, done) {
-    return done(null, authorized(jwt_payload, "admin"));
+    return done(null, true);
   })
 );
-
-passport.use(
-  "user",
-  new JwtStrategy(opts, function (jwt_payload, done) {
-    return done(null, authorized(jwt_payload, "user"));
-  })
-);
-
-async function authorized(user, role) {
-  return user.role == role;
-}
 
 module.exports = passport;

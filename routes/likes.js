@@ -1,5 +1,6 @@
 const express = require("express");
 const debug = require("debug")("ms-songs:server");
+const passport = require("passport");
 
 const router = express.Router();
 
@@ -40,44 +41,52 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-router.post("/", async function (req, res, next) {
-  try {
-    const { songId, userId } = req.body;
-    const { user } = await userService.getUserById(userId);
-    const song = await Song.findById(songId);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    try {
+      const { songId, userId } = req.body;
+      const { user } = await userService.getUserById(userId);
+      const song = await Song.findById(songId);
 
-    const like = new Like({
-      song: songId,
-      user,
-    });
+      const like = new Like({
+        song: songId,
+        user,
+      });
 
-    if (user && song) {
-      const alreadyExists = await Like.alreadyExists(songId, user._id);
-      if (!alreadyExists) {
-        const savedLike = await like.save();
-        song.likes = song.likes.concat(savedLike._id);
-        song.save();
-        res.sendStatus(201);
+      if (user && song) {
+        const alreadyExists = await Like.alreadyExists(songId, user._id);
+        if (!alreadyExists) {
+          const savedLike = await like.save();
+          song.likes = song.likes.concat(savedLike._id);
+          song.save();
+          res.sendStatus(201);
+        } else {
+          res.status(409).send("Conflict: Duplicate");
+        }
       } else {
-        res.status(409).send("Conflict: Duplicate");
+        next();
       }
-    } else {
-      next();
+    } catch (err) {
+      next(err);
     }
-  } catch (err) {
-    next(err);
   }
-});
+);
 
-router.delete("/:id", async function (req, res, next) {
-  try {
-    const id = req.params.id;
-    const result = await Like.findByIdAndDelete(id);
-    res.sendStatus(204);
-  } catch (err) {
-    next(err);
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    try {
+      const id = req.params.id;
+      const result = await Like.findByIdAndDelete(id);
+      res.sendStatus(204);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 router.use((req, res, next) => {
   res.sendStatus(400).end();
