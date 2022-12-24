@@ -10,6 +10,8 @@ env:
 jobs:
   test:
     uses: fisg4/ms-songs/.github/workflows/tests.yml@main
+    secrets: inherit
+
   deploy:
     needs: test
     runs-on: ubuntu-latest
