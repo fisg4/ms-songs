@@ -4,9 +4,6 @@ on:
   push:
     branches: [main]
 
-env:
-  JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
 jobs:
   test:
     uses: fisg4/ms-songs/.github/workflows/tests.yml@main
