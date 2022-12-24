@@ -8,6 +8,8 @@ deploy:
     --set msSongsMongoUrl=$MS_SONGS_DB_URL
     --set spotifyAppClientId=$SPOTIFY_APP_CLIENT_ID
     --set spotifyAppClientSecret=$SPOTIFY_APP_CLIENT_SECRET
+    --set supportHost=$SUPPORT_HOST
+    --set usersHost=$USERS_HOST
 
 dev:
   ms-songs:
