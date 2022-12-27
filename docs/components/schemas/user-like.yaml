@@ -1,6 +1,6 @@
 components:
   schemas:
-    SongsUserLikes:
+    UserLike:
       type: object
       properties:
         song:
@@ -9,13 +9,22 @@ components:
             title:
               type: string
               example: MOTOMAMI
+            artists:
+              type: array
+              items:
+                type: string
+                example:
+                  - ROSALIA
             albumCover:
               type: string
               example: https://i.scdn.co/image/ab67616d0000b2730c179967a265de0fc76382fe
             id:
-              type: string
-              example: 6393291baae5a26cbf501bab
+              type: ObjectId
+              example: ObjectId("6393291baae5a26cbf501bab")
         date:
           type: string
           format: date
           example: "2022-03-18"
+        id:
+          type: ObjectId
+          example: ObjectId("6393291baae5a26cbf501cde")

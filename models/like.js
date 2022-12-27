@@ -18,7 +18,7 @@ likeSchema.methods.cleanUser = function () {
   return {
     id: this.id,
     song: this.song,
-    date: this.date,
+    date: this.date.toISOString().split('T')[0]
   };
 };
 
@@ -26,7 +26,7 @@ likeSchema.methods.cleanSong = function () {
   return {
     id: this.id,
     user: this.user,
-    date: this.date,
+    date: this.date.toISOString().split('T')[0]
   };
 };
 

@@ -15,6 +15,7 @@ const songSchema = new Schema({
 songSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id,
+        returnedObject.releaseDate = returnedObject.releaseDate.toISOString().split('T')[0],
         delete returnedObject._id,
         delete returnedObject.__v
     }

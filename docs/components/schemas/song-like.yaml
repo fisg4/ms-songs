@@ -1,6 +1,6 @@
 components:
   schemas:
-    UsersLikeSong:
+    SongLike:
       type: object
       properties:
         user:
@@ -10,9 +10,12 @@ components:
               type: string
               example: name4user
             id:
-              type: string
-              example: 6393291baae5a26cbf501bab
+              type: ObjectId
+              example: ObjectId("6393291baae5a26cbf501bab")
         date:
           type: string
           format: date
           example: "2022-03-18"
+        id:
+          type: ObjectId
+          example: ObjectId("6393291baae5a26cbf501baf")

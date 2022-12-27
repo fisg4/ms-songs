@@ -18,7 +18,7 @@ module.exports = (err, req, res, next) => {
     else if (err?.code === 11000 || err?.message === "Duplicate like")
         res.status(409).send("Conflict: Duplicate");
 
-    else if(err?.name === "ValidationError" || err?.name === "SyntaxError")
+    else if(err?.name === "ValidationError" || err?.name === "SyntaxError" || err?.message === "Invalid ticket")
         res.status(400).send("Bad Request: " + err.message).end();
     else
         res.sendStatus(500).end();

@@ -3,7 +3,7 @@ paths:
     get:
       tags:
         - Likes
-      summary: Gets the songs the user likes
+      summary: Gets the songs that the user likes
       description: Returns a list of all songs that a user has liked
       parameters:
         - name: userId
@@ -20,9 +20,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/SongsUserLikes"
+                  $ref: "#/components/schemas/UserLike"
         "204":
-          description: There are no likes in the system associated with the search criteria
+          description: The user has not liked any song in the system yet
+        "404":
+          description: User not found. The user does not exist in the system
+        "500":
+          description: Internal Server Error. An error occurred when searching
+            for the user likes
   /likes?songId:
     get:
       tags:
@@ -44,9 +49,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/UsersLikeSong"
+                  $ref: "#/components/schemas/SongLike"
         "204":
-          description: There are no likes in the system associated with the search criteria
+          description: The song has no likes in the system yet
+        "404":
+          description: Song not found. The song does not exist in the system
+        "500":
+          description: Internal Server Error. An error occurred when searching
+            for the song likes
   /likes:
     post:
       tags:
@@ -70,7 +80,9 @@ paths:
         "201":
           description: Successful operation. Posted like
         "409":
-          description: Duplicated like
+          description: Duplicate like. The user has already liked the song
+        "500":
+          description: Internal Server Error. An error occurred when saving the like
   /likes/:id:
     delete:
       tags:
@@ -86,8 +98,12 @@ paths:
             type: string
       responses:
         "204":
-          description: No Content
+          description: Successful operation. Like removed from the system
+        "404":
+          description: Like not found. The like does not exist in the system
+        "500":
+          description: Internal Server Error. An error occurred when removing the like
 components:
   $ref:
-    - "./components/schemas/songs-user-likes.yaml"
-    - "./components/schemas/users-like-song.yaml"
+    - "./components/schemas/user-like.yaml"
+    - "./components/schemas/song-like.yaml"

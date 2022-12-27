@@ -1,0 +1,16 @@
+components:
+  schemas:
+    TicketPost:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: ObjectId
+          example: 6393291baae5a26cbf501b9a
+        songId:
+          type: string
+          format: ObjectId
+          example: 6393291baae5a26cbf503b2a
+        videoUrl:
+          type: string
+          example: https://www.youtube.com/watch?v=TiM_TFpT_DE&ab_channel=MTZManuelTurizo

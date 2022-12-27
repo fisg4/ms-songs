@@ -1,6 +1,6 @@
 components:
   schemas:
-    SpotifyResponse:
+    SpotifySong:
       type: object
       properties:
         title:
@@ -12,14 +12,14 @@ components:
             type: string
           example:
             - ROSALÍA
+        albumCover:
+          type: string
+          example: https://i.scdn.co/image/ab67616d0000b2730c179967a265de0fc76382fe
         releaseDate:
           type: string
           format: date
           example: "2022-03-18"
-        albumCover:
-          type: string
-          example: https://i.scdn.co/image/ab67616d0000b2730c179967a265de0fc76382fe
-        url:
+        audioUrl:
           type: string
           example: https://p.scdn.co/mp3-preview/b46b957c1f7b1afc39c33e2a95695514ca9c6fd6?cid=4719ec888a3d4d1099df0534d0e98f41
         spotifyId:

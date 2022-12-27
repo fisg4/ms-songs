@@ -134,7 +134,7 @@ router.post("/ticket", async function (req, res, next) {
     if (result.status == 201) {
       res.status(result.status).send(result.ticket);
     } else {
-      res.sendStatus(400);
+      throw new Error("Invalid ticket");
     }
   } catch (err) {
     next(err);
