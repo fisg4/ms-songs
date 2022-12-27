@@ -1,4 +1,6 @@
 const express = require("express");
+const passport = require("passport");
+
 const router = express.Router();
 
 const Like = require("../models/like");
@@ -42,44 +44,53 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-router.post("/", async function (req, res, next) {
-  try {
-    const { songId, userId } = req.body;
-    const { user } = await userService.getUserById(userId);
-    const song = await Song.findById(songId);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    try {
+      const { songId, userId } = req.body;
+      const { user } = await userService.getUserById(userId);
+      const song = await Song.findById(songId);
 
-    const like = new Like({
-      song: songId,
-      user,
-    });
-    if (user && song) {
-      const alreadyExists = await Like.alreadyExists(songId, user._id);
-      if (!alreadyExists) {
-        const savedLike = await like.save();
-        song.likes = song.likes.concat(savedLike._id);
-        song.save();
-        res.sendStatus(201);
+      const like = new Like({
+        song: songId,
+        user,
+      });
+
+      if (user && song) {
+        const alreadyExists = await Like.alreadyExists(songId, user._id);
+        if (!alreadyExists) {
+          const savedLike = await like.save();
+          song.likes = song.likes.concat(savedLike._id);
+          song.save();
+          res.sendStatus(201);
+        } else {
+          throw new Error("Duplicate like");
+        }
       } else {
-        throw new Error("Duplicate like");
+        throw new Error("Invalid song or user");
       }
-    } else {
-      throw new Error("Invalid song or user");
+    } catch (err) {
+      next(err);
     }
-  } catch (err) {
-    next(err);
   }
-});
+);
 
-router.delete("/:id", async function (req, res, next) {
-  try {
-    const id = req.params.id;
-    const result = await Like.findByIdAndDelete(id);
-    res.sendStatus(204);
-  } catch (err) {
-    err = new Error("Failed to delete like")
-    next(err);
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    try {
+      const id = req.params.id;
+      const result = await Like.findByIdAndDelete(id);
+      res.sendStatus(204);
+    } catch (err) {
+      err = new Error("Failed to delete like")
+      next(err);
+    }
   }
-});
+);
 
 router.use(notFound);
 

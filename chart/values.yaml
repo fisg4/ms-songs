@@ -5,3 +5,6 @@ msSongsMongUrl: mongodb://mongo/test
 
 spotifyAppClientId: required value
 spotifyAppClientSecret: required value
+supportHost: required value
+usersHost: required value
+jwtSecret: required value

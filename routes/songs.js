@@ -1,4 +1,6 @@
 const express = require("express");
+const passport = require("passport");
+
 const router = express.Router();
 
 const Song = require("../models/song");
@@ -99,86 +101,102 @@ router.get("/spotify", async function (req, res, next) {
   }
 });
 
-router.post("/", async function (req, res, next) {
-  try {
-    const { title, artists, releaseDate, albumCover, audioUrl, videoUrl, lyrics, spotifyId } =
-      req.body;
-    const song = new Song({
-      title,
-      artists,
-      releaseDate: new Date(releaseDate),
-      albumCover,
-      audioUrl: audioUrl,
-      videoUrl,
-      lyrics,
-      spotifyId,
-      likes: [],
-    });
-    await song.save();
-    return res.status(201).send(song);
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post("/ticket", async function (req, res, next) {
-  // it calls ms-support to post a new ticket
-  try {
-    const ticket = req.body;
-    const result = await ticketService.postTicketToChangeVideoUrl({
-      authorId: ticket.userId,
-      songId: ticket.songId,
-      text: ticket.videoUrl,
-    });
-
-    if (result.status == 201) {
-      res.status(result.status).send(result.ticket);
-    } else {
-      throw new Error("Invalid ticket");
-    }
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.put("/", async function (req, res, next) {
-  try {
-    const { id, url, videoUrl, lyrics } = req.body;
-    if (Object.keys(req.body).length >= 2) {
-      const newInfo = {};
-      if (typeof url !== "undefined") newInfo.videoUrl = url;
-      if (typeof videoUrl !== "undefined") newInfo.videoUrl = videoUrl;
-      if (typeof lyrics !== "undefined") newInfo.lyrics = lyrics;
-
-      const result = await Song.findByIdAndUpdate(id, newInfo, {
-        new: true
-      }).populate("likes", {
-        user: 1,
-        date: 1,
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    try {
+      const { title, artists, releaseDate, albumCover, audioUrl, videoUrl, lyrics, spotifyId } =
+        req.body;
+      const song = new Song({
+        title,
+        artists,
+        releaseDate: new Date(releaseDate),
+        albumCover,
+        audioUrl: audioUrl,
+        videoUrl,
+        lyrics,
+        spotifyId,
+        likes: [],
       });
-      res.send(result);
-    } else {
-      res.sendStatus(400);
+      await song.save();
+      return res.status(201).send(song);
+    } catch (err) {
+      next(err);
     }
-  } catch (err) {
-    next(err);
   }
-});
+);
 
-router.delete("/:id", async function (req, res, next) {
-  try {
-    const id = req.params.id;
-    const result = await Song.findByIdAndDelete(id);
-    if (result) {
-      await Like.deleteMany({ song: id });
-      res.sendStatus(204);
-    } else {
-      throw new Error("Invalid song");
+router.post(
+  "/ticket",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    // it calls ms-support to post a new ticket
+    try {
+      const ticket = req.body;
+      const result = await ticketService.postTicketToChangeVideoUrl({
+        authorId: ticket.userId,
+        songId: ticket.songId,
+        text: ticket.videoUrl,
+      });
+
+      if (result.status == 201) {
+        res.status(result.status).send(result.ticket);
+      } else {
+        throw new Error("Invalid ticket");
+      }
+    } catch (err) {
+      next(err);
     }
-  } catch (err) {
-    next(err);
   }
-});
+);
+
+router.put(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    try {
+      const { id, url, videoUrl, lyrics } = req.body;
+      if (Object.keys(req.body).length >= 2) {
+        const newInfo = {};
+        if (typeof url !== "undefined") newInfo.videoUrl = url;
+        if (typeof videoUrl !== "undefined") newInfo.videoUrl = videoUrl;
+        if (typeof lyrics !== "undefined") newInfo.lyrics = lyrics;
+
+        const result = await Song.findByIdAndUpdate(id, newInfo, {
+          new: true
+        }).populate("likes", {
+          user: 1,
+          date: 1,
+        });
+        res.send(result);
+      } else {
+        res.sendStatus(400);
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res, next) {
+    try {
+      const id = req.params.id;
+      const result = await Song.findByIdAndDelete(id);
+      if (result) {
+        await Like.deleteMany({ song: id });
+        res.sendStatus(204);
+      } else {
+        throw new Error("Invalid song");
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 router.use(notFound);
 
