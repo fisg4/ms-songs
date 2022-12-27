@@ -6,6 +6,7 @@ const spotifyService = require("../../services/spotify");
 const ticketService = require("../../services/support");
 
 const BASEPATH_ENDPOINT = "/api/v1";
+const TEST_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYTYzYzVlMDcyMjFjMzM2ODM4NzUyZiIsInJvbGUiOiJ1c2VyIiwicGxhbiI6ImZyZWUiLCJ1c2VybmFtZSI6Im1ydWFubyIsImVtYWlsIjoibXJ1YW5vQHVzLmVzIiwiaWF0IjoxNjcxODc5ODMwfQ.EDfJ-XZHpdEeIMQtlU83hlMo-1aV3fWLPQDeajeCpB0"
 
 const songs = [
   {
@@ -212,7 +213,10 @@ describe("Songs API", () => {
           videoUrl:
             "https://www.youtube.com/watch?v=u8jb8z3zUJM&ab_channel=Ozuna",
           userId: "632266d51f1d8d5c46e31109",
-        });
+        }).set(
+          "Authorization",
+          "Bearer " + TEST_JWT
+        );
       expect(ticketServiceMock).toHaveBeenCalled();
       expect(response.status).toBe(201);
       expect(response.type).toEqual(expect.stringContaining("json"));
@@ -243,7 +247,10 @@ describe("Songs API", () => {
           audioUrl: "https://www.youtube.com/watch?v=u8jb8z3zUJM&ab.mp3",
           lyrics: "",
           spotifyId: "9095db3b",
-        });
+        }).set(
+          "Authorization",
+          "Bearer " + TEST_JWT
+        );
       expect(saveSongMock).toHaveBeenCalled();
       expect(response.status).toBe(201);
       expect(response.type).toEqual(expect.stringContaining("json"));
@@ -272,7 +279,10 @@ describe("Songs API", () => {
           audioUrl: "https://www.youtube.com/watch?v=u8jb8z3zUJM&ab.mp3",
           lyrics: "",
           spotifyId: "9095db3b",
-        });
+        }).set(
+          "Authorization",
+          "Bearer " + TEST_JWT
+        );
       expect(saveSongMock).toHaveBeenCalled();
       expect(response.status).toBe(409);
       expect(response.type).toEqual(expect.stringContaining("text"));
@@ -296,7 +306,10 @@ describe("Songs API", () => {
           id: "639266d51f1d8d5c46e31c3f",
           lyrics: "",
           url: "https://www.youtube.com/watch?v=u8jb8z3zUJM&ab_channel=Ozuna",
-        });
+        }).set(
+          "Authorization",
+          "Bearer " + TEST_JWT
+        );
       expect(updateSongMock).toHaveBeenCalled();
       expect(response.status).toBe(200);
       expect(response.type).toEqual(expect.stringContaining("json"));
@@ -323,6 +336,9 @@ describe("Songs API", () => {
 
       const response = await request(app).delete(
         `${BASEPATH_ENDPOINT}/songs/639266d51f1d8d5c46e31c3f`
+      ).set(
+        "Authorization",
+        "Bearer " + TEST_JWT
       );
       expect(deleteSongMock).toHaveBeenCalled();
       expect(deleteLikesMock).toHaveBeenCalled();
@@ -339,6 +355,9 @@ describe("Songs API", () => {
 
       const response = await request(app).delete(
         `${BASEPATH_ENDPOINT}/songs/639266d51f1d8d5c46e31c3f`
+      ).set(
+        "Authorization",
+        "Bearer " + TEST_JWT
       );
       expect(deleteSongMock).toHaveBeenCalled();
       expect(deleteLikesMock).toHaveBeenCalled();

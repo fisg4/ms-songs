@@ -5,6 +5,7 @@ const userService = require("../../services/users");
 const request = require("supertest");
 
 const BASEPATH_ENDPOINT = "/api/v1";
+const TEST_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYTYzYzVlMDcyMjFjMzM2ODM4NzUyZiIsInJvbGUiOiJ1c2VyIiwicGxhbiI6ImZyZWUiLCJ1c2VybmFtZSI6Im1ydWFubyIsImVtYWlsIjoibXJ1YW5vQHVzLmVzIiwiaWF0IjoxNjcxODc5ODMwfQ.EDfJ-XZHpdEeIMQtlU83hlMo-1aV3fWLPQDeajeCpB0"
 
 const songs = [
   {
@@ -320,7 +321,10 @@ describe("Songs API", () => {
       const response = await request(app).post(`${BASEPATH_ENDPOINT}/likes`).send({
         songId: songs[2].id,
         userId: users[0].id
-      });
+      }).set(
+        "Authorization",
+        "Bearer " + TEST_JWT
+      );
       expect(getUserByIdMock).toHaveBeenCalled();
       expect(findSongByIdMock).toHaveBeenCalled();
       expect(alreadyExistsMock).toHaveBeenCalled();
@@ -361,7 +365,10 @@ describe("Songs API", () => {
       const response = await request(app).post(`${BASEPATH_ENDPOINT}/likes`).send({
         songId: songs[2].id,
         userId: users[0].id
-      });
+      }).set(
+        "Authorization",
+        "Bearer " + TEST_JWT
+      );
       expect(getUserByIdMock).toHaveBeenCalled();
       expect(findSongByIdMock).toHaveBeenCalled();
       expect(alreadyExistsMock).toHaveBeenCalled();
@@ -386,7 +393,10 @@ describe("Songs API", () => {
       const response = await request(app).post(`${BASEPATH_ENDPOINT}/likes`).send({
         songId: songs[2].id,
         userId: users[0].id
-      });
+      }).set(
+        "Authorization",
+        "Bearer " + TEST_JWT
+      );
       expect(getUserByIdMock).toHaveBeenCalled();
       expect(findSongByIdMock).toHaveBeenCalled();
       expect(response.status).toBe(404);
@@ -407,7 +417,10 @@ describe("Songs API", () => {
       const response = await request(app).post(`${BASEPATH_ENDPOINT}/likes`).send({
         songId: songs[2].id,
         userId: users[0].id
-      });
+      }).set(
+        "Authorization",
+        "Bearer " + TEST_JWT
+      );
       expect(getUserByIdMock).toHaveBeenCalled();
       expect(findSongByIdMock).toHaveBeenCalled();
       expect(response.status).toBe(404);
@@ -423,7 +436,10 @@ describe("Songs API", () => {
       const response = await request(app).post(`${BASEPATH_ENDPOINT}/likes`).send({
         songId: songs[2].id,
         userId: users[0].id
-      });
+      }).set(
+        "Authorization",
+        "Bearer " + TEST_JWT
+      );
       expect(getUserByIdMock).toHaveBeenCalled();
       expect(response.status).toBe(500);
     });
@@ -438,7 +454,10 @@ describe("Songs API", () => {
         return undefined;
       });
 
-      const response = await request(app).del(`${BASEPATH_ENDPOINT}/likes/` + likes[0]._id);
+      const response = await request(app).del(`${BASEPATH_ENDPOINT}/likes/` + likes[0]._id).set(
+        "Authorization",
+        "Bearer " + TEST_JWT
+      );
       expect(findAndDeleteMock).toHaveBeenCalled();
       expect(response.status).toBe(204);
     });
@@ -450,7 +469,10 @@ describe("Songs API", () => {
         throw new Error("Invalid like id");
       });
 
-      const response = await request(app).del(`${BASEPATH_ENDPOINT}/likes/` + likes[0]._id);
+      const response = await request(app).del(`${BASEPATH_ENDPOINT}/likes/` + likes[0]._id).set(
+        "Authorization",
+        "Bearer " + TEST_JWT
+      );
       expect(findAndDeleteMock).toHaveBeenCalled();
       expect(response.status).toBe(404);
     });
