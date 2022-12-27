@@ -247,7 +247,7 @@ describe("Songs API", () => {
       expect(saveSongMock).toHaveBeenCalled();
       expect(response.status).toBe(201);
       expect(response.type).toEqual(expect.stringContaining("json"));
-      expect(response.body.song.title).toEqual("Hey Mor");
+      expect(response.body.title).toEqual("Hey Mor");
     });
 
     it("Should return 409 if the song already exists", async () => {
@@ -334,15 +334,7 @@ describe("Songs API", () => {
       const deleteLikesMock = jest.spyOn(Like, "deleteMany");
 
       deleteSongMock.mockImplementation(() => {
-        return {
-          status: 404,
-        };
-      });
-
-      deleteLikesMock.mockImplementation(() => {
-        return {
-          status: 404,
-        };
+        return null
       });
 
       const response = await request(app).delete(

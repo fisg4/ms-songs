@@ -13,7 +13,8 @@ const songs = [
     albumCover: "https://i.scdn.co/image/ab67616d0000b27393c4eec56cea95c9022ed28f",
     releaseDate: "2022-11-16",
     lyrics: "",
-    url: "https://www.youtube.com/watch?v=Gzs60iBgd3E&ab_channel=Bizarrap",
+    audioUrl: "https://www.youtube.com/watch?v=Gzs60iBgd3E&ab_channel=Bizarrap",
+    videoUrl: "https://www.youtube.com/watch?v=Gzs60iBgd3E&ab_channel=Bizarrap",
     spotifyId: "7MkylDYvKTSuWgrsBhHlsG",
     likes: ["5f9f1b9f1f1d8d5c46e31c3f", "5f9f1b9f1f1d8d5c46e31c3e"],
     id: "639266d51f1d8d5c46e31c3f",
@@ -23,7 +24,7 @@ const songs = [
     artists: ["ROSALÍA"],
     albumCover: "https://i.scdn.co/image/ab67616d0000b2738f072024e0358fc5c62eba41",
     releaseDate: "2022-07-28",
-    url: "https://p.scdn.co/mp3-preview/c9bada701f6ef03ef67d5ae0e8ff8bde40499313?cid=d9d5c6f2f2224912a23530862aa9fec3",
+    audioUrl: "https://p.scdn.co/mp3-preview/c9bada701f6ef03ef67d5ae0e8ff8bde40499313?cid=d9d5c6f2f2224912a23530862aa9fec3",
     spotifyId: "5ildQOEKmJuWGl2vRkFdYc",
     likes: ["5f9f1b9f1f1d8d5c46e31c3d"],
     id: "639319967a53a5498109fcb0",
@@ -34,7 +35,8 @@ const songs = [
     albumCover: "https://i.scdn.co/image/ab67616d0000b273125624f2e04f5a1ccb0dfb45",
     releaseDate: "2022-10-07",
     lyrics: "",
-    url: "https://www.youtube.com/watch?v=u8jb8z3zUJM&ab_channel=Ozuna",
+    audioUrl: "https://www.youtube.com/watch?v=u8jb8z3zUJM&ab_channel=Ozuna",
+    videoUrl: "https://www.youtube.com/watch?v=u8jb8z3zUJM&ab_channel=Ozuna",
     spotifyId: "1zsPaEkglFvxjAhrM8yhpr",
     likes: [],
     id: "639319967a53a5498109fcb1",
@@ -160,7 +162,7 @@ describe("Songs API", () => {
       expect(response.status).toBe(204);
     });
 
-    it("Should return Bad Request state if the song does not exist", async () => {
+    it("Should return Not Found state if the song does not exist", async () => {
       const findMock = jest.spyOn(Like, "find");
       const whereMock = jest.fn(() => { return { equals: equalsMock } });
       const equalsMock = jest.fn(() => undefined);
@@ -175,7 +177,7 @@ describe("Songs API", () => {
       expect(findMock).toHaveBeenCalled();
       expect(whereMock).toHaveBeenCalled();
       expect(equalsMock).toHaveBeenCalled();
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
     });
 
     // By user
@@ -251,7 +253,7 @@ describe("Songs API", () => {
       expect(response.status).toBe(204);
     });
 
-    it("Should return Bad Request state if the song does not exist", async () => {
+    it("Should return Not Found state if the user does not exist", async () => {
       const findMock = jest.spyOn(Like, "find");
       const whereMock = jest.fn(() => { return { equals: equalsMock } });
       const equalsMock = jest.fn(() => undefined);
@@ -266,7 +268,7 @@ describe("Songs API", () => {
       expect(findMock).toHaveBeenCalled();
       expect(whereMock).toHaveBeenCalled();
       expect(equalsMock).toHaveBeenCalled();
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
     });
 
     it("Should return Not Found state if the url is not well formed", async () => {
@@ -296,7 +298,7 @@ describe("Songs API", () => {
           artists: songs[2].artists,
           releaseDate: songs[2].releaseDate,
           albumCover: songs[2].albumCover,
-          url: songs[2].url,
+          audioUrl: songs[2].audioUrl,
           lyrics: songs[2].lyrics,
           spotifyId: songs[2].spotifyId,
           likes: songs[2].likes,
@@ -345,7 +347,7 @@ describe("Songs API", () => {
           artists: songs[2].artists,
           releaseDate: songs[2].releaseDate,
           albumCover: songs[2].albumCover,
-          url: songs[2].url,
+          audioUrl: songs[2].audioUrl,
           lyrics: songs[2].lyrics,
           spotifyId: songs[2].spotifyId,
           likes: songs[2].likes,
@@ -366,7 +368,7 @@ describe("Songs API", () => {
       expect(response.status).toBe(409);
     });
 
-    it("Should return Bad Request state if the song does not exist", async () => {
+    it("Should return Not Found state if the song does not exist", async () => {
       const getUserByIdMock = jest.spyOn(userService, "getUserById");
       const findSongByIdMock = jest.spyOn(Song, "findById");
 
@@ -387,10 +389,10 @@ describe("Songs API", () => {
       });
       expect(getUserByIdMock).toHaveBeenCalled();
       expect(findSongByIdMock).toHaveBeenCalled();
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
     });
 
-    it("Should return Bad Request state if the user does not exist", async () => {
+    it("Should return Not Found state if the user does not exist", async () => {
       const getUserByIdMock = jest.spyOn(userService, "getUserById");
       const findSongByIdMock = jest.spyOn(Song, "findById");
 
@@ -408,7 +410,7 @@ describe("Songs API", () => {
       });
       expect(getUserByIdMock).toHaveBeenCalled();
       expect(findSongByIdMock).toHaveBeenCalled();
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
     });
 
     it("Should return Internal Server Error state if an unknown error occurs", async () => {
@@ -441,7 +443,7 @@ describe("Songs API", () => {
       expect(response.status).toBe(204);
     });
 
-    it("Should return Bad Request state if the like does not exist", async () => {
+    it("Should return Not Found state if the like does not exist", async () => {
       const findAndDeleteMock = jest.spyOn(Like, "findByIdAndDelete");
 
       findAndDeleteMock.mockImplementation(() => {
@@ -450,7 +452,7 @@ describe("Songs API", () => {
 
       const response = await request(app).del(`${BASEPATH_ENDPOINT}/likes/` + likes[0]._id);
       expect(findAndDeleteMock).toHaveBeenCalled();
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
     });
   });
 

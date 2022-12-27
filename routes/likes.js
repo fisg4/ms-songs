@@ -60,7 +60,7 @@ router.post("/", async function (req, res, next) {
         song.save();
         res.sendStatus(201);
       } else {
-        res.status(409).send("Conflict: Duplicate");
+        throw new Error("Duplicate like");
       }
     } else {
       throw new Error("Invalid song or user");
