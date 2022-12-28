@@ -6,7 +6,7 @@ const spotifyService = require("../../services/spotify");
 const ticketService = require("../../services/support");
 
 const BASEPATH_ENDPOINT = "/api/v1";
-const TEST_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYTYzYzVlMDcyMjFjMzM2ODM4NzUyZiIsInJvbGUiOiJ1c2VyIiwicGxhbiI6ImZyZWUiLCJ1c2VybmFtZSI6Im1ydWFubyIsImVtYWlsIjoibXJ1YW5vQHVzLmVzIiwiaWF0IjoxNjcxODc5ODMwfQ.EDfJ-XZHpdEeIMQtlU83hlMo-1aV3fWLPQDeajeCpB0"
+const TEST_TOKEN_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYTYzYzVlMDcyMjFjMzM2ODM4NzUyZiIsInJvbGUiOiJ1c2VyIiwicGxhbiI6ImZyZWUiLCJ1c2VybmFtZSI6Im1ydWFubyIsImVtYWlsIjoibXJ1YW5vQHVzLmVzIiwiaWF0IjoxNjcxODc5ODMwfQ.EDfJ-XZHpdEeIMQtlU83hlMo-1aV3fWLPQDeajeCpB0"
 
 const songs = [
   {
@@ -88,6 +88,15 @@ describe("Songs API", () => {
     });
 
     it("Should return 404 if the song is not found", async () => {
+      const findMock = jest.spyOn(Song, "findById");
+      const populateMock = jest.fn(() => undefined);
+
+      findMock.mockImplementation(() => {
+        return {
+          populate: populateMock,
+        };
+      });
+
       const response = await request(app).get(
         `${BASEPATH_ENDPOINT}/songs/639266d51f1d8d5c46e31c21`
       );
@@ -215,7 +224,7 @@ describe("Songs API", () => {
           userId: "632266d51f1d8d5c46e31109",
         }).set(
           "Authorization",
-          "Bearer " + TEST_JWT
+          "Bearer " + TEST_TOKEN_JWT
         );
       expect(ticketServiceMock).toHaveBeenCalled();
       expect(response.status).toBe(201);
@@ -249,7 +258,7 @@ describe("Songs API", () => {
           spotifyId: "9095db3b",
         }).set(
           "Authorization",
-          "Bearer " + TEST_JWT
+          "Bearer " + TEST_TOKEN_JWT
         );
       expect(saveSongMock).toHaveBeenCalled();
       expect(response.status).toBe(201);
@@ -281,7 +290,7 @@ describe("Songs API", () => {
           spotifyId: "9095db3b",
         }).set(
           "Authorization",
-          "Bearer " + TEST_JWT
+          "Bearer " + TEST_TOKEN_JWT
         );
       expect(saveSongMock).toHaveBeenCalled();
       expect(response.status).toBe(409);
@@ -308,7 +317,7 @@ describe("Songs API", () => {
           url: "https://www.youtube.com/watch?v=u8jb8z3zUJM&ab_channel=Ozuna",
         }).set(
           "Authorization",
-          "Bearer " + TEST_JWT
+          "Bearer " + TEST_TOKEN_JWT
         );
       expect(updateSongMock).toHaveBeenCalled();
       expect(response.status).toBe(200);
@@ -338,7 +347,7 @@ describe("Songs API", () => {
         `${BASEPATH_ENDPOINT}/songs/639266d51f1d8d5c46e31c3f`
       ).set(
         "Authorization",
-        "Bearer " + TEST_JWT
+        "Bearer " + TEST_TOKEN_JWT
       );
       expect(deleteSongMock).toHaveBeenCalled();
       expect(deleteLikesMock).toHaveBeenCalled();
@@ -357,7 +366,7 @@ describe("Songs API", () => {
         `${BASEPATH_ENDPOINT}/songs/639266d51f1d8d5c46e31c3f`
       ).set(
         "Authorization",
-        "Bearer " + TEST_JWT
+        "Bearer " + TEST_TOKEN_JWT
       );
       expect(deleteSongMock).toHaveBeenCalled();
       expect(deleteLikesMock).toHaveBeenCalled();
