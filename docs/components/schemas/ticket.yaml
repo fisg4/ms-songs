@@ -3,9 +3,38 @@ components:
     Ticket:
       type: object
       properties:
-        id:
+        authorId:
+          type: ObjectId
+          example: ObjectId("507f1f77bcf86cd799439011")
+        reviewerId:
+          type: ObjectId
+          example: ObjectId("637d0c328a43d958f6ff661d")
+        songId:
+          type: ObjectId
+          example: ObjectId("6393291baae5a26cbf503b2a")
+        title:
           type: string
-          example: 6393291baae5a26cbf501bab
-        url:
+          maxLength: 100
+          example: Video clip change request
+        text:
           type: string
+          maxLength: 255
           example: https://www.youtube.com/watch?v=TiM_TFpT_DE&ab_channel=MTZManuelTurizo
+        status:
+          type: string
+          enum:
+            values: [sent, rejected, validated]
+          default: sent
+          example: sent
+        priority:
+          type: string
+          enum:
+            values: [low, medium, high]
+          default: low
+          example: medium
+        createDate:
+          type: Date
+          example: "2022-12-17T09:05:05.954Z"
+        updateDate:
+          type: Date
+          example: "2022-12-17T10:05:05.954Z"

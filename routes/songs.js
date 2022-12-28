@@ -1,5 +1,4 @@
 const express = require("express");
-const debug = require("debug")("ms-songs:server");
 const passport = require("passport");
 
 const router = express.Router();
@@ -8,6 +7,8 @@ const Song = require("../models/song");
 const Like = require("../models/like");
 const ticketService = require("../services/support");
 const spotifyService = require("../services/spotify");
+const notFound = require("./notFound");
+const handleErrors = require("./handleErrors");
 
 router.get("/", async function (req, res, next) {
   try {
@@ -16,9 +17,9 @@ router.get("/", async function (req, res, next) {
         user: 1,
         date: 1,
       });
-      if (result) res.send(result);
+      if (result?.length > 0) res.send(result);
       else res.sendStatus(204);
-    } else if (req.query.hasOwnProperty("title")) {
+    } else {
       next();
     }
   } catch (err) {
@@ -35,7 +36,7 @@ router.get("/:id", async function (req, res, next) {
         date: 1,
       });
       if (result) res.send(result);
-      else res.sendStatus(204);
+      else throw new Error("Invalid song");
     } else {
       next();
     }
@@ -47,14 +48,14 @@ router.get("/:id", async function (req, res, next) {
 /* GET songs by title */
 router.get("/", async function (req, res, next) {
   try {
-    if (Object.keys(req.query).length > 0) {
+    if (req.query.hasOwnProperty("title")) {
       const title = req.query.title.toLocaleLowerCase().trim();
       const regexTitle = new RegExp(`\\b${title}\\b`, "i");
       const result = await Song.find({ title: regexTitle }).populate("likes", {
         user: 1,
         date: 1,
       });
-      if (result) res.send(result);
+      if (result?.length > 0) res.send(result);
       else res.sendStatus(204);
     } else {
       next();
@@ -80,7 +81,7 @@ router.get("/spotify", async function (req, res, next) {
             artists: [],
             albumCover: track.album.images[0].url,
             releaseDate: track.album.release_date,
-            url: track.preview_url,
+            audioUrl: track.preview_url,
             spotifyId: track.id,
           };
           track.artists.forEach((artist) => {
@@ -105,30 +106,23 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async function (req, res, next) {
     try {
-      const {
-        title,
-        artists,
-        releaseDate,
-        albumCover,
-        url,
-        lyrics,
-        spotifyId,
-      } = req.body;
+      const { title, artists, releaseDate, albumCover, audioUrl, videoUrl, lyrics, spotifyId } =
+        req.body;
       const song = new Song({
         title,
         artists,
         releaseDate: new Date(releaseDate),
         albumCover,
-        url,
+        audioUrl: audioUrl,
+        videoUrl,
         lyrics,
         spotifyId,
         likes: [],
       });
       await song.save();
-      return res.sendStatus(201);
+      return res.status(201).send(song);
     } catch (err) {
-      if (err?.code === 11000) res.status(409).send("Conflict: Duplicate");
-      else next(err);
+      next(err);
     }
   }
 );
@@ -149,7 +143,7 @@ router.post(
       if (result.status == 201) {
         res.status(result.status).send(result.ticket);
       } else {
-        res.sendStatus(400);
+        throw new Error("Invalid ticket");
       }
     } catch (err) {
       next(err);
@@ -162,14 +156,15 @@ router.put(
   passport.authenticate("jwt", { session: false }),
   async function (req, res, next) {
     try {
-      const { id, url, lyrics } = req.body;
-      if (Object.keys(req.query).length === 0) {
+      const { id, url, videoUrl, lyrics } = req.body;
+      if (Object.keys(req.body).length >= 2) {
         const newInfo = {};
-        if (typeof url !== "undefined") newInfo.url = url;
+        if (typeof url !== "undefined") newInfo.videoUrl = url;
+        if (typeof videoUrl !== "undefined") newInfo.videoUrl = videoUrl;
         if (typeof lyrics !== "undefined") newInfo.lyrics = lyrics;
 
         const result = await Song.findByIdAndUpdate(id, newInfo, {
-          new: true,
+          new: true
         }).populate("likes", {
           user: 1,
           date: 1,
@@ -191,23 +186,20 @@ router.delete(
     try {
       const id = req.params.id;
       const result = await Song.findByIdAndDelete(id);
-      const deletedLikes = await Like.deleteMany({ song: id });
-      res.sendStatus(204);
+      if (result) {
+        await Like.deleteMany({ song: id });
+        res.sendStatus(204);
+      } else {
+        throw new Error("Invalid song");
+      }
     } catch (err) {
       next(err);
     }
   }
 );
 
-router.use((req, res, next) => {
-  res.sendStatus(404).end();
-});
+router.use(notFound);
 
-router.use((err, req, res, next) => {
-  console.log(err);
-  debug("DB problem", err);
-  if (err.name === "CastError") res.sendStatus(400).end();
-  else res.sendStatus(500).end();
-});
+router.use(handleErrors);
 
 module.exports = router;

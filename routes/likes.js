@@ -1,5 +1,4 @@
 const express = require("express");
-const debug = require("debug")("ms-songs:server");
 const passport = require("passport");
 
 const router = express.Router();
@@ -7,6 +6,8 @@ const router = express.Router();
 const Like = require("../models/like");
 const Song = require("../models/song");
 const userService = require("../services/users");
+const notFound = require("./notFound");
+const handleErrors = require("./handleErrors");
 
 /* GET likes by userId or songId */
 router.get("/", async function (req, res, next) {
@@ -19,11 +20,12 @@ router.get("/", async function (req, res, next) {
         .equals(filter.userId)
         .populate("song", {
           title: 1,
-          artist: 1,
+          artists: 1,
           albumCover: 1,
         });
-      if (result.length > 0) res.send(result.map((like) => like.cleanUser()));
+      if (result?.length > 0) res.send(result.map((like) => like.cleanUser()));
       else res.sendStatus(204);
+
     } else if (filter.hasOwnProperty("songId")) {
       const result = await Like.find()
         .where("song")
@@ -31,8 +33,9 @@ router.get("/", async function (req, res, next) {
         .populate("user", {
           username: 1,
         });
-      if (result.length > 0) res.send(result.map((like) => like.cleanSong()));
+      if (result?.length > 0) res.send(result.map((like) => like.cleanSong()));
       else res.sendStatus(204);
+
     } else {
       next();
     }
@@ -63,10 +66,10 @@ router.post(
           song.save();
           res.sendStatus(201);
         } else {
-          res.status(409).send("Conflict: Duplicate");
+          throw new Error("Duplicate like");
         }
       } else {
-        next();
+        throw new Error("Invalid song or user");
       }
     } catch (err) {
       next(err);
@@ -83,20 +86,14 @@ router.delete(
       const result = await Like.findByIdAndDelete(id);
       res.sendStatus(204);
     } catch (err) {
+      err = new Error("Failed to delete like")
       next(err);
     }
   }
 );
 
-router.use((req, res, next) => {
-  res.sendStatus(400).end();
-});
+router.use(notFound);
 
-router.use((err, req, res, next) => {
-  console.log(err);
-  debug("DB problem", err);
-  if (err.name === "CastError") res.sendStatus(400).end();
-  else res.sendStatus(500).end();
-});
+router.use(handleErrors);
 
 module.exports = router;

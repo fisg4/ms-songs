@@ -8,12 +8,12 @@ const options = {
       title: "FastMusik Songs Microservice API",
       version: "1.0.0",
       description:
-        "Specification of models and endpoints for communication and integration with the service offered by ms-songs.\n\n" +
-        "Host: https://songs-fastmusik-marmolpen3.cloud.okteto.net\n\n" +
-        "Base Path: /api/v1",
+        "Specification of models and endpoints for communication and integration with the service offered by ms-songs."
     },
-    host: "https://songs-fastmusik-marmolpen3.cloud.okteto.net",
-    basePath: "/api/v1",
+    servers: [{
+      url: "https://songs-fastmusik-marmolpen3.cloud.okteto.net/api/v1",
+      description: "Production server"
+    }],
   },
   apis: ["./docs/**/*.yaml"],
 };

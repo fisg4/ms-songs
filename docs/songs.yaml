@@ -24,6 +24,9 @@ paths:
                   $ref: "#/components/schemas/Song"
         "204":
           description: There are no songs in the system
+        "500":
+          description: Internal Server Error. An error occurred when searching
+            for songs
     post:
       tags:
         - Songs
@@ -31,23 +34,27 @@ paths:
       description: Through this operation, a result obtained after searching
         for songs on Spotify is saved in the system
       requestBody:
-        description: Created song object
+        description: New song object
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SpotifyResponse"
+              $ref: "#/components/schemas/SpotifySong"
       responses:
         "201":
           description: Successful operation. Posted song
+        "400":
+          description: Bad Request. The song is not valid
         "409":
-          description: Duplicated song
+          description: Duplicate song. The song already exists in the system
+        "500":
+          description: Internal Server Error. An error occurred when saving the song
     put:
       tags:
         - Songs
       summary: Update a song
-      description: Update the lyrics of the song and the URL link to the video clip
+      description: Update the lyrics of the song or the URL link to the video clip
       requestBody:
-        description: Created song object
+        description: Song id and the new lyrics or URL
         content:
           application/json:
             schema:
@@ -55,40 +62,52 @@ paths:
               properties:
                 id:
                   type: string
-                url:
+                  format: ObjectId
+                  example: 5f9f1b9b9b9b9b9b9b9b9b9b
+                videoUrl:
                   type: string
+                  example: https://www.youtube.com/watch?v=5f9f1b9b9b9b9b9b9b9b9b9b
                 lyrics:
                   type: string
+                  example: Lorem ipsum dolor sit amet, consectetur adipiscing elit
       responses:
         "200":
           description: The updated song
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Song"
+                $ref: "#/components/schemas/Song"
         "400":
-          description: Bad Request
+          description: Bad Request. The parameters are not valid
+        "404":
+          description: Song not found. The song does not exist in the system
+        "500":
+          description: Internal Server Error. An error occurred when updating the song
   /songs/ticket:
     post:
       tags:
         - Songs
       summary: Post a ticket to modify a song's video
       description:
-        The created ticket is sent to the support service so that it can be
+        The new ticket is sent to the support service so that it can be
         evaluated. If accepted, the changes are made to the resource
       requestBody:
-        description: Created ticket object
+        description: New ticket object
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Ticket"
+              $ref: "#/components/schemas/TicketPost"
       responses:
         "201":
-          description: Successful operation. Posted ticket
+          description: Successful operation. Ticket created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
         "400":
-          description: Bad Request
+          description: Bad Request. The ticket is not valid
+        "500":
+          description: Internal Server Error. An error occurred when creating the ticket
   /songs/:id:
     get:
       tags:
@@ -104,13 +123,16 @@ paths:
             type: string
       responses:
         "200":
-          description: The song
+          description: A song object
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Song"
         "404":
-          description: Song not found
+          description: Song not found. The song does not exist in the system
+        "500":
+          description: Internal Server Error. An error occurred when searching
+            for the song
     delete:
       tags:
         - Songs
@@ -125,7 +147,11 @@ paths:
             type: string
       responses:
         "204":
-          description: No Content
+          description: No Content. The song was deleted
+        "404":
+          description: Song not found. The song does not exist in the system
+        "500":
+          description: Internal Server Error. An error occurred when deleting the song
   /songs/spotify:
     get:
       tags:
@@ -153,12 +179,15 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/SpotifyResponse"
+                  $ref: "#/components/schemas/SpotifySong"
         "204":
-          description: There are no songs in the system
+          description: There are no songs in the system that match the search
+        "500":
+          description: Internal Server Error. An error occurred when searching
+            for songs on Spotify
 components:
   $ref:
     - "./components/schemas/song.yaml"
-    - "./components/schemas/spotify-response.yaml"
+    - "./components/schemas/spotify-song.yaml"
     - "./components/schemas/ticket.yaml"
-    - "./components/parameters/song-id.yaml"
+    - "./components/schemas/ticket-post.yaml"

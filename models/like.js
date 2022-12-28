@@ -1,8 +1,6 @@
 const { Schema, model } = require("mongoose");
 
 const likeSchema = new Schema({
-  // TODO: MS Users Integration
-  // user: { type: Schema.Types.ObjectId, required: true },
   song: { type: Schema.Types.ObjectId, required: true, ref: "Song" },
   user: { type: Object, required: true },
   date: { type: Date, default: Date.now },
@@ -20,7 +18,7 @@ likeSchema.methods.cleanUser = function () {
   return {
     id: this.id,
     song: this.song,
-    date: this.date,
+    date: this.date.toISOString().split('T')[0]
   };
 };
 
@@ -28,7 +26,7 @@ likeSchema.methods.cleanSong = function () {
   return {
     id: this.id,
     user: this.user,
-    date: this.date,
+    date: this.date.toISOString().split('T')[0]
   };
 };
 

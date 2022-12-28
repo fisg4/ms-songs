@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const mongoose = require("mongoose");
 const Song = require("../../song");
 const dbConnect = require("../../../db");
@@ -20,7 +22,7 @@ describe("Songs DB connection", () => {
       releaseDate: "2022-11-16",
       albumCover: "http://tocoversong.com/d78c0d7",
       lyrics: "",
-      url: "https://www.youtube.com/watch?v=Gzs60iBgd3E&ab_channel=Bizarrap",
+      audioUrl: "https://www.youtube.com/watch?v=Gzs60iBgd3E&ab_channel=Bizarrap",
       spotifyId: "d78c0d7",
       likes: [],
     });

@@ -20,9 +20,12 @@ components:
         albumCover:
           type: string
           example: https://i.scdn.co/image/ab67616d0000b2730c179967a265de0fc76382fe
-        url:
+        audioUrl:
           type: string
           example: https://p.scdn.co/mp3-preview/b46b957c1f7b1afc39c33e2a95695514ca9c6fd6?cid=4719ec888a3d4d1099df0534d0e98f41
+        videoUrl:
+          type: string
+          example: https://www.youtube.com/watch?v=EslzthDFm2w&ab_channel=RosaliaVEVO
         lyrics:
           type: string
           example: Okay, motomami
@@ -39,7 +42,10 @@ components:
         likes:
           type: array
           items:
-            $ref: "#/components/schemas/Like"
+            type: ObjectId
+          example:
+            - ObjectId("6393291baae5a26cbf501bdf")
+            - ObjectId("6393291baae5a26cbf501bda")
         id:
-          type: string
-          example: 6393291baae5a26cbf501bab
+          type: ObjectId
+          example: ObjectId("6393291baae5a26cbf501bab")

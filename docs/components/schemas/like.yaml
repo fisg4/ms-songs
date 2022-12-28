@@ -14,5 +14,5 @@ components:
           format: date
           example: "2022-12-01"
         id:
-          type: string
-          example: 6393294aaae5a26cbf501bae
+          type: ObjectId
+          example: ObjectId("6393294aaae5a26cbf501bae")
