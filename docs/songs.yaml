@@ -120,7 +120,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         "500":
           description: Internal Server Error. An error occurred when creating the ticket
-  /songs/:id:
+  /songs/{id}:
     get:
       tags:
         - Songs

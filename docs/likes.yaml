@@ -87,7 +87,7 @@ paths:
           description: Duplicate like. The user has already liked the song
         "500":
           description: Internal Server Error. An error occurred when saving the like
-  /likes/:id:
+  /likes/{id}:
     delete:
       security:
         - bearerAuth: []
