@@ -59,6 +59,8 @@ paths:
             for the song likes
   /likes:
     post:
+      security:
+        - bearerAuth: []
       tags:
         - Likes
       summary: Post a new like for a song
@@ -79,12 +81,16 @@ paths:
       responses:
         "201":
           description: Successful operation. Posted like
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         "409":
           description: Duplicate like. The user has already liked the song
         "500":
           description: Internal Server Error. An error occurred when saving the like
-  /likes/:id:
+  /likes/{id}:
     delete:
+      security:
+        - bearerAuth: []
       tags:
         - Likes
       summary: Remove a like
@@ -99,6 +105,8 @@ paths:
       responses:
         "204":
           description: Successful operation. Like removed from the system
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         "404":
           description: Like not found. The like does not exist in the system
         "500":
@@ -107,3 +115,5 @@ components:
   $ref:
     - "./components/schemas/user-like.yaml"
     - "./components/schemas/song-like.yaml"
+    - "./components/schemas/security.yaml"
+    - "./components/responses/unauthorized-error.yaml"

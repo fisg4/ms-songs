@@ -1,0 +1,9 @@
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description:
+        JWT token to be used in the Authorization header of the request,
+        e.g. "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzYTYzYzVlMDcyMjFjMzM2ODM4NzUyZiIsInJvbGUiOiJ1c2VyIiwicGxhbiI6ImZyZWUiLCJ1c2VybmFtZSI6Im1ydWFubyIsImVtYWlsIjoibXJ1YW5vQHVzLmVzIiwiaWF0IjoxNjcxODc5ODMwfQ.EDfJ-XZHpdEeIMQtlU83hlMo-1aV3fWLPQDeajeCpB0"
