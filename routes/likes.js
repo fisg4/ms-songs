@@ -16,7 +16,7 @@ router.get("/", async function (req, res, next) {
 
     if (filter.hasOwnProperty("userId")) {
       const result = await Like.find()
-        .where("user._id")
+        .where("user.id")
         .equals(filter.userId)
         .populate("song", {
           title: 1,
@@ -25,7 +25,6 @@ router.get("/", async function (req, res, next) {
         });
       if (result?.length > 0) res.send(result.map((like) => like.cleanUser()));
       else res.sendStatus(204);
-
     } else if (filter.hasOwnProperty("songId")) {
       const result = await Like.find()
         .where("song")
@@ -35,7 +34,6 @@ router.get("/", async function (req, res, next) {
         });
       if (result?.length > 0) res.send(result.map((like) => like.cleanSong()));
       else res.sendStatus(204);
-
     } else {
       next();
     }
@@ -86,7 +84,7 @@ router.delete(
       const result = await Like.findByIdAndDelete(id);
       res.sendStatus(204);
     } catch (err) {
-      err = new Error("Failed to delete like")
+      err = new Error("Failed to delete like");
       next(err);
     }
   }

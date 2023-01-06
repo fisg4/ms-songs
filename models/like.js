@@ -18,7 +18,7 @@ likeSchema.methods.cleanUser = function () {
   return {
     id: this.id,
     song: this.song,
-    date: this.date.toISOString().split('T')[0]
+    date: this.date.toISOString().split("T")[0],
   };
 };
 
@@ -26,12 +26,12 @@ likeSchema.methods.cleanSong = function () {
   return {
     id: this.id,
     user: this.user,
-    date: this.date.toISOString().split('T')[0]
+    date: this.date.toISOString().split("T")[0],
   };
 };
 
 likeSchema.statics.alreadyExists = async function (songId, userId) {
-  const result = await Like.findOne({ song: songId, "user._id": userId });
+  const result = await Like.findOne({ song: songId, "user.id": userId });
   if (!result) return false;
   else return result;
 };
