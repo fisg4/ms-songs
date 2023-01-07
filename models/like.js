@@ -17,7 +17,10 @@ likeSchema.set("toJSON", {
 likeSchema.methods.cleanUser = function () {
   return {
     id: this.id,
-    song: this.song,
+    song: {
+      id: this.song.id,
+      title: this.song.title,
+    },
     date: this.date.toISOString().split("T")[0],
   };
 };
@@ -25,13 +28,16 @@ likeSchema.methods.cleanUser = function () {
 likeSchema.methods.cleanSong = function () {
   return {
     id: this.id,
-    user: this.user,
+    user: {
+      id: this.user.id,
+      username: this.user.username,
+    },
     date: this.date.toISOString().split("T")[0],
   };
 };
 
 likeSchema.statics.alreadyExists = async function (songId, userId) {
-  const result = await Like.findOne({ song: songId, "user.id": userId });
+  const result = await Like.findOne({ song: songId, "user._id": userId });
   if (!result) return false;
   else return result;
 };
