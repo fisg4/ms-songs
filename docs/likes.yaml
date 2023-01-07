@@ -21,10 +21,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/UserLike"
-        "204":
-          description: The user has not liked any song in the system yet
         "404":
-          description: User not found. The user does not exist in the system
+          description: Likes not found. There are no likes that match this user id
         "500":
           description: Internal Server Error. An error occurred when searching
             for the user likes
@@ -50,10 +48,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/SongLike"
-        "204":
-          description: The song has no likes in the system yet
         "404":
-          description: Song not found. The song does not exist in the system
+          description: Likes not found. There are no likes that match this song id
         "500":
           description: Internal Server Error. An error occurred when searching
             for the song likes
@@ -81,8 +77,8 @@ paths:
       responses:
         "201":
           description: Successful operation. Posted like
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
         "409":
           description: Duplicate like. The user has already liked the song
         "500":
@@ -105,8 +101,8 @@ paths:
       responses:
         "204":
           description: Successful operation. Like removed from the system
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
         "404":
           description: Like not found. The like does not exist in the system
         "500":

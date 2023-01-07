@@ -20,6 +20,8 @@ likeSchema.methods.cleanUser = function () {
     song: {
       id: this.song.id,
       title: this.song.title,
+      artists: this.song.artists,
+      albumCover: this.song.albumCover,
     },
     date: this.date.toISOString().split("T")[0],
   };
@@ -37,7 +39,7 @@ likeSchema.methods.cleanSong = function () {
 };
 
 likeSchema.statics.alreadyExists = async function (songId, userId) {
-  const result = await Like.findOne({ song: songId, "user._id": userId });
+  const result = await Like.findOne({ song: songId, "user.id": userId });
   if (!result) return false;
   else return result;
 };

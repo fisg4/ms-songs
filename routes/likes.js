@@ -24,14 +24,14 @@ router.get("/", async function (req, res, next) {
         }
       );
       if (result?.length > 0) res.send(result.map((like) => like.cleanUser()));
-      else res.sendStatus(204);
+      else res.sendStatus(404);
     } else if (filter.hasOwnProperty("songId")) {
       const result = await Like.find(
         { song: filter.songId },
         { song: 1, "user.username": 1, "user.id": 1, date: 1, _id: 1 }
       );
       if (result?.length > 0) res.send(result.map((like) => like.cleanSong()));
-      else res.sendStatus(204);
+      else res.sendStatus(404);
     } else {
       next();
     }
@@ -55,7 +55,7 @@ router.post(
       });
 
       if (user && song) {
-        const alreadyExists = await Like.alreadyExists(songId, user._id);
+        const alreadyExists = await Like.alreadyExists(songId, user.id);
         if (!alreadyExists) {
           const savedLike = await like.save();
           song.likes = song.likes.concat(savedLike._id);

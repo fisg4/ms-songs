@@ -139,18 +139,6 @@ describe("Songs API", () => {
       expect(response.body).toBeArrayOfSize(2);
     });
 
-    it("Should return No Content state if the song has no likes", async () => {
-      const findMock = jest.spyOn(Like, "find");
-
-      findMock.mockImplementation(() => []);
-
-      const response = await request(app).get(
-        `${BASEPATH_ENDPOINT}/likes?songId=` + songs[2].id
-      );
-      expect(findMock).toHaveBeenCalled();
-      expect(response.status).toBe(204);
-    });
-
     it("Should return Not Found state if the song does not exist", async () => {
       const findMock = jest.spyOn(Like, "find");
 
@@ -216,7 +204,7 @@ describe("Songs API", () => {
       expect(response.body).toBeArrayOfSize(2);
     });
 
-    it("Should return No Content state if the user has no likes", async () => {
+    it("Should return Not Found state if the user has no likes", async () => {
       const findMock = jest.spyOn(Like, "find");
       const populateMock = jest.fn(() => []);
 
@@ -231,7 +219,7 @@ describe("Songs API", () => {
       );
       expect(findMock).toHaveBeenCalled();
       expect(populateMock).toHaveBeenCalled();
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(404);
     });
 
     it("Should return Not Found state if the user does not exist", async () => {
