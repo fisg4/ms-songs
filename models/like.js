@@ -17,7 +17,12 @@ likeSchema.set("toJSON", {
 likeSchema.methods.cleanUser = function () {
   return {
     id: this.id,
-    song: this.song,
+    song: {
+      id: this.song.id,
+      title: this.song.title,
+      artists: this.song.artists,
+      albumCover: this.song.albumCover,
+    },
     date: this.date.toISOString().split("T")[0],
   };
 };
@@ -25,7 +30,10 @@ likeSchema.methods.cleanUser = function () {
 likeSchema.methods.cleanSong = function () {
   return {
     id: this.id,
-    user: this.user,
+    user: {
+      id: this.user.id,
+      username: this.user.username,
+    },
     date: this.date.toISOString().split("T")[0],
   };
 };
