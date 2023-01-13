@@ -134,10 +134,13 @@ router.post(
     // it calls ms-support to post a new ticket
     try {
       const ticket = req.body;
+      const token = req.headers.authorization;
+
       const result = await ticketService.postTicketToChangeVideoUrl({
         authorId: ticket.userId,
         songId: ticket.songId,
         text: ticket.videoUrl,
+        token
       });
 
       if (result.status == 201) {
