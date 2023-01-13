@@ -1,7 +1,7 @@
 const axios = require("axios");
 const urlJoin = require("url-join");
 
-async function postTicketToChangeVideoUrl({ authorId, songId, text }) {
+async function postTicketToChangeVideoUrl({ authorId, songId, text, token }) {
   const url = urlJoin(process.env.SUPPORT_HOST, "/support/v1/tickets");
   const response = await axios.post(
     url,
@@ -15,6 +15,7 @@ async function postTicketToChangeVideoUrl({ authorId, songId, text }) {
     {
       headers: {
         "Content-Type": "application/json",
+        "Authorization": token,
       },
     }
   );
