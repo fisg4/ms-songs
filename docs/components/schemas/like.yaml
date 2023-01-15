@@ -12,7 +12,7 @@ components:
         date:
           type: string
           format: date
-          example: "2022-12-01"
+          example: "2023-01-01T00:00:00.000Z"
         id:
           type: ObjectId
           example: ObjectId("6393294aaae5a26cbf501bae")

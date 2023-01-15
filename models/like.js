@@ -23,7 +23,7 @@ likeSchema.methods.cleanUser = function () {
       artists: this.song.artists,
       albumCover: this.song.albumCover,
     },
-    date: this.date.toISOString().split("T")[0],
+    date: this.date.toISOString(),
   };
 };
 
@@ -34,7 +34,7 @@ likeSchema.methods.cleanSong = function () {
       id: this.user.id,
       username: this.user.username,
     },
-    date: this.date.toISOString().split("T")[0],
+    date: this.date.toISOString(),
   };
 };
 
