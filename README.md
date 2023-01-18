@@ -1,12 +1,31 @@
 # Songs Microservice (ms-songs)
 
+![FastMusik Logo](https://raw.githubusercontent.com/fisg4/client/main/src/images/fastMusik_logo.png)
+
 El microservicio de canciones (ms-songs) es un proyecto desarrollado para la aplicación FastMusik, por el equipo formado por Juan Carlos Cortés Muñoz y Mario Ruano Fernández, en el contexto de la asignatura Fundamentos de Ingeniería del Software (FIS) del Máster en Ingeniería del Software: Cloud, Datos y Gestión TI, de la Universidad de Sevilla (curso académico, 22-23).
 
 Sirva este documento como manifiesto del trabajo realizado por este equipo.
 
 ## Nivel de acabado
 
-El equipo se presenta al nivel de acabado correspondiente a la máxima calificación de 9, cumpliendo con los requisitos para tal fin.
+El equipo se presenta al nivel de acabado correspondiente a la máxima calificación de 9, cumpliendo con los requisitos que se lista para tal fin:
+
+- Implementación y cumplimiento de todos los requisitos de microservicio a nivel básico.
+- Implementación de requisitos de microservicio a nivel avanzado:
+  - Implementar frontend con rutas y navegación.
+  - Implementar pruebas de interfaz de usuario.
+  - Usar Redux para gestionar el estado de los componentes de React correspondientes al microservicio.
+  - Consumo de una API externa a través del backend del microservicio (integración con API de Spotify).
+  - Implementar mecanismo de autenticación basado en JWT.
+- Implementación de aplicación a nivel básico, cubriendo diferentes integraciones con otros microservicios:
+  - Realización de POST al microservicio de soporte ms-support.
+  - Realización de GET al microservicio de usuarios ms-users.
+- Implementación de requisitos de aplicación a nivel avanzado:
+  - Frontend común
+  - Uso de API Gateway con funcionalidad avanzada (mecanismo de autenticación).
+  - Implementación de un mecanismo de autenticación homogéneo para todos los microservicios (a través de la API Gateway, mediante JWT).
+
+Además, se incluye el diseño de un Customer Agreement y princing basado en el análisis de la capacidad realizado. También la documentación de la API REST del microservicio desplegada mediante Swagger, demostración del funcionamiento de la aplicación y presentación para la defensa en el aula.
 
 ## Descripción de la aplicación
 
@@ -18,11 +37,13 @@ Además, FastMusik es una aplicación que cuenta con el respaldo de un sistema d
 
 ## Microservicios
 
-FastMusik está compuesta por varios microservicios, entre los que se encuentran los siguientes:
+FastMusik se divide en 5 microservicios: usuarios, canciones, mensajería, soporte y, por último, una API Gateway. Todos ellos se integran a través del backend para compartir y complementar la información. Estos se integran a su vez con APIs externas como DeepL, Spotify, SendGrid y PurgoMalum. Por otro lado, en la API Gateway se localizan funciones de centralización de operaciones, principalmente el mapeo de endpoints de los diferentes microservicios, para ser un único punto de consumo para el frontend, y para la autenticación de usuarios y generación de JWT.
 
 ### Microservicio de usuarios
 
-Descripción
+El modelado de datos de este microservicio se basa en una única entidad, la que representa a los usuarios, que contiene toda la información necesaria para la gestión de los mismos. Con ella se presentan las siguientes funcionalidades: operaciones CRUD de la entidad, gestión de credenciales, registro y control de usuarios en los clientes y comprobación de texto ofensivo.
+
+Como puntos destacables, está el uso de una API externa, PurgoMalum, para comprobar los textos que se introducen en el sistema; la autenticación que permite el control de la sesión del usuario y la centralización de la información de los usuarios.
 
 ### Microservicio de canciones
 
@@ -34,11 +55,15 @@ Otras funcionalidades que derivan de este microservicio son la de generar un lis
 
 ### Microservicio de mensajes
 
-Descripción
+El modelado de datos de este microservicio se basa en las entidades de Salas y Mensajes, las cuales contienen toda la información para posibilitar las conversaciones entre usuarios del sistema. Este servicio presenta funcionalidades como la recuperación de entidades con paginación, la traducción del texto de los mensajes, las operaciones CRUD de ambas entidades y el reporte de mensajes ofensivos.
+
+Como puntos destacables, el uso de la API externa de DeepL para la traducción y la integración interna para los reportes usando mecanismos de rollback ante fallos.
 
 ### Microservicio de soporte
 
-Descripción
+El modelado de datos de este microservicio se basa en las entidades de Tickets y Reports, las cuales contienen toda la información necesaria para mantener el control y el buen funcionamiento del sistema. Este servicio presenta funcionalidades como el envío de notificaciones a los usuarios, las operaciones CRUD con las entidades y la gestión de incidencias.
+
+Como puntos destacables están el uso de la API externa de SendGrid para enviar correos, la tolerancia a fallos desplegando un cliente adicional para la gestión de incidencias y el mecanismo de rollback incluido en la integración con los diferentes microservicios.
 
 ## Customer Agreement
 
