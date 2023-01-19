@@ -67,11 +67,12 @@ Como puntos destacables están el uso de la API externa de SendGrid para enviar 
 
 ## Customer Agreement
 
-Enlace al CA
+- [Customer Agreement]()
 
 ## Análisis de la capacidad y pricing
 
-Enlace a ambos
+- [Análisis de la capacidad](https://github.com/fisg4/client/wiki/An%C3%A1lisis-de-la-capacidad)
+- [Pricing]()
 
 ## API REST de ms-songs
 
