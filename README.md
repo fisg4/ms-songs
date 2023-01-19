@@ -67,12 +67,12 @@ Como puntos destacables están el uso de la API externa de SendGrid para enviar 
 
 ## Customer Agreement
 
-- [Customer Agreement]()
+- [Customer Agreement](https://fastmusik-fastmusik-marmolpen3.cloud.okteto.net/customer-agreement)
 
 ## Análisis de la capacidad y pricing
 
 - [Análisis de la capacidad](https://github.com/fisg4/client/wiki/An%C3%A1lisis-de-la-capacidad)
-- [Pricing]()
+- [Pricing](https://fastmusik-fastmusik-marmolpen3.cloud.okteto.net/pricing)
 
 ## API REST de ms-songs
 
